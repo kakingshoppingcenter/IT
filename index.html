@@ -1,0 +1,3596 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>IT Inventory Management System</title>
+    <meta
+      name="description"
+      content="Static GitHub Pages IT inventory system backed by Supabase with QR device pages, repair requests, transfer tracking, and admin workflows."
+    />
+    <style>
+:root {
+  color-scheme: dark;
+  --bg-0: #07101e;
+  --bg-1: #091427;
+  --bg-2: #0b1d39;
+  --panel: rgba(9, 20, 40, 0.78);
+  --panel-strong: rgba(7, 15, 30, 0.92);
+  --panel-soft: rgba(255, 255, 255, 0.05);
+  --line: rgba(132, 177, 255, 0.18);
+  --line-strong: rgba(132, 177, 255, 0.28);
+  --text: #f3f7ff;
+  --muted: #a8b9d3;
+  --muted-strong: #d7e4ff;
+  --blue: #1877f2;
+  --blue-strong: #0f5ecb;
+  --cyan: #4ce2ff;
+  --sky: #b8e7ff;
+  --emerald: #6ee7b7;
+  --rose: #fb7185;
+  --amber: #fbbf24;
+  --shadow: 0 24px 64px rgba(2, 8, 23, 0.32);
+  --shadow-soft: 0 16px 34px rgba(2, 8, 23, 0.18);
+  --radius-xl: 30px;
+  --radius-lg: 24px;
+  --radius-md: 18px;
+  --radius-sm: 14px;
+  --content-width: 1240px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Segoe UI", "Inter", system-ui, sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(circle at 12% 10%, rgba(24, 119, 242, 0.24), transparent 22%),
+    radial-gradient(circle at 88% 12%, rgba(76, 226, 255, 0.16), transparent 19%),
+    radial-gradient(circle at 74% 76%, rgba(24, 119, 242, 0.18), transparent 24%),
+    linear-gradient(160deg, var(--bg-0) 0%, var(--bg-1) 48%, #06111f 100%);
+  overflow-x: hidden;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    linear-gradient(rgba(132, 177, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(132, 177, 255, 0.06) 1px, transparent 1px);
+  background-size: 86px 86px;
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.84), transparent 90%);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.app-shell,
+.boot-shell {
+  width: min(var(--content-width), calc(100% - 32px));
+  margin: 0 auto;
+  padding: 24px 0 56px;
+}
+
+.app-shell {
+  display: grid;
+  gap: 24px;
+}
+
+.boot-shell {
+  display: flex;
+  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
+}
+
+.boot-panel,
+.panel {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-xl);
+  background:
+    radial-gradient(circle at top right, rgba(76, 226, 255, 0.12), transparent 28%),
+    linear-gradient(180deg, rgba(9, 20, 40, 0.92), rgba(7, 15, 30, 0.84));
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(18px);
+}
+
+.boot-panel {
+  max-width: 640px;
+  padding: 28px;
+}
+
+.panel::before,
+.boot-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), transparent 22%);
+  pointer-events: none;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  padding: 10px 16px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--sky);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.eyebrow::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--blue), var(--cyan));
+  box-shadow: 0 0 0 6px rgba(24, 119, 242, 0.12);
+}
+
+.boot-panel h1,
+.hero-title,
+.section-title,
+.panel-title {
+  margin: 18px 0 0;
+  letter-spacing: -0.04em;
+  line-height: 0.98;
+}
+
+.boot-panel h1 {
+  font-size: clamp(2rem, 4vw, 3.2rem);
+}
+
+.boot-copy,
+.hero-copy,
+.section-copy,
+.muted {
+  color: var(--muted);
+  line-height: 1.8;
+}
+
+.topbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.brand-mark {
+  display: flex;
+  width: 52px;
+  height: 52px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 18px;
+  border: 1px solid var(--line);
+  background: linear-gradient(135deg, rgba(24, 119, 242, 0.26), rgba(76, 226, 255, 0.12));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  color: white;
+}
+
+.brand-copy h1 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.brand-copy p {
+  margin: 4px 0 0;
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+
+.top-actions,
+.nav-links,
+.action-row,
+.filter-row,
+.card-grid,
+.stats-grid,
+.chip-row,
+.page-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.nav-links a,
+.chip,
+.button,
+.ghost-button,
+.badge,
+.status-badge,
+.tiny-link {
+  transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.nav-links a,
+.chip,
+.ghost-button {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--muted-strong);
+}
+
+.nav-links a,
+.chip {
+  padding: 10px 16px;
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+.nav-links a.active,
+.chip.active {
+  border-color: rgba(76, 226, 255, 0.28);
+  background: linear-gradient(135deg, rgba(24, 119, 242, 0.32), rgba(76, 226, 255, 0.18));
+  color: white;
+  box-shadow: 0 16px 30px rgba(24, 119, 242, 0.2);
+}
+
+.nav-links a:hover,
+.chip:hover,
+.ghost-button:hover,
+.button:hover,
+.tiny-link:hover {
+  transform: translateY(-2px);
+}
+
+.hero {
+  display: grid;
+  gap: 24px;
+  grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
+}
+
+.hero-main,
+.hero-side,
+.panel-pad {
+  padding: 26px;
+}
+
+.hero-title {
+  font-size: clamp(2.5rem, 4vw, 4.4rem);
+  max-width: 760px;
+}
+
+.hero-copy {
+  margin-top: 16px;
+  max-width: 720px;
+  font-size: 1.04rem;
+}
+
+.cta-primary,
+.button.primary {
+  background: linear-gradient(135deg, var(--blue) 0%, #46b8ff 54%, var(--cyan) 100%);
+  border: 0;
+  color: white;
+  box-shadow: 0 18px 34px rgba(24, 119, 242, 0.26);
+}
+
+.cta-secondary,
+.button.secondary {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--line);
+  color: var(--text);
+}
+
+.button,
+.cta-primary,
+.cta-secondary,
+.ghost-button {
+  display: inline-flex;
+  min-height: 46px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 18px;
+  border-radius: 18px;
+  font-weight: 800;
+}
+
+.ghost-button {
+  min-height: 40px;
+  padding: 0 14px;
+  color: var(--text);
+}
+
+.button.danger {
+  border: 0;
+  background: linear-gradient(135deg, #be123c, #fb7185);
+  color: white;
+  box-shadow: 0 16px 30px rgba(190, 24, 60, 0.24);
+}
+
+.button.success {
+  border: 0;
+  background: linear-gradient(135deg, #059669, #34d399);
+  color: white;
+}
+
+.button[disabled],
+.ghost-button[disabled] {
+  opacity: 0.58;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.stat-card,
+.info-card,
+.feed-card,
+.metric-card,
+.table-shell,
+.empty-state,
+.form-shell,
+.detail-shell,
+.timeline-card {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--panel-soft);
+}
+
+.stat-card,
+.info-card,
+.metric-card,
+.feed-card,
+.empty-state,
+.timeline-card {
+  padding: 18px;
+}
+
+.stat-card strong,
+.metric-value {
+  display: block;
+  font-size: 2rem;
+  letter-spacing: -0.04em;
+}
+
+.stat-card span,
+.metric-help {
+  display: block;
+  margin-top: 6px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.stack-grid,
+.page-grid,
+.detail-grid,
+.device-grid {
+  display: grid;
+  gap: 22px;
+}
+
+.page-grid {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.device-grid {
+  grid-template-columns: minmax(0, 1.18fr) minmax(320px, 0.82fr);
+}
+
+.detail-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.form-grid {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.form-grid .full {
+  grid-column: 1 / -1;
+}
+
+.field {
+  display: grid;
+  gap: 8px;
+}
+
+.field label {
+  color: var(--muted-strong);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.input,
+.select,
+.textarea,
+.file-input {
+  width: 100%;
+  min-height: 48px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(9, 20, 40, 0.88), rgba(10, 25, 48, 0.74));
+  color: var(--text);
+  padding: 12px 14px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), var(--shadow-soft);
+  outline: none;
+}
+
+.textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.input:focus,
+.select:focus,
+.textarea:focus,
+.file-input:focus {
+  border-color: rgba(76, 226, 255, 0.48);
+  box-shadow: 0 0 0 4px rgba(76, 226, 255, 0.14);
+}
+
+.checkbox-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.checkbox-card {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 14px 16px;
+  border-radius: 18px;
+  border: 1px solid var(--line);
+  background: var(--panel-soft);
+}
+
+.checkbox-card input {
+  margin-top: 3px;
+}
+
+.checkbox-card strong {
+  display: block;
+  font-size: 0.94rem;
+}
+
+.checkbox-card span {
+  display: block;
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+
+.table-shell {
+  overflow: hidden;
+}
+
+.table-scroll {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 840px;
+}
+
+thead {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+th,
+td {
+  padding: 14px 16px;
+  text-align: left;
+  vertical-align: top;
+}
+
+th {
+  color: var(--muted);
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+tbody tr {
+  border-top: 1px solid rgba(132, 177, 255, 0.1);
+}
+
+tbody tr:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.status-badge,
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 30px;
+  padding: 0 12px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.badge.info {
+  background: rgba(24, 119, 242, 0.16);
+  color: var(--sky);
+}
+
+.badge.active {
+  background: rgba(52, 211, 153, 0.16);
+  color: #bbf7d0;
+}
+
+.badge.archived,
+.badge.rose {
+  background: rgba(251, 113, 133, 0.16);
+  color: #fecdd3;
+}
+
+.badge.amber {
+  background: rgba(251, 191, 36, 0.16);
+  color: #fde68a;
+}
+
+.badge.slate {
+  background: rgba(148, 163, 184, 0.16);
+  color: #dbeafe;
+}
+
+.tiny-link {
+  color: var(--sky);
+  font-weight: 700;
+}
+
+.tiny-link.danger {
+  color: #fecdd3;
+}
+
+.tiny-link.success {
+  color: #bbf7d0;
+}
+
+.inline-meta,
+.detail-list,
+.timeline,
+.helper-list {
+  display: grid;
+  gap: 12px;
+}
+
+.detail-list p,
+.helper-list p,
+.timeline-card p {
+  margin: 0;
+}
+
+.panel-title {
+  font-size: 1.8rem;
+}
+
+.section-title {
+  font-size: clamp(2rem, 3vw, 2.7rem);
+}
+
+.section-copy,
+.helper-text,
+.table-note,
+.empty-state p,
+.info-card p {
+  margin: 10px 0 0;
+  color: var(--muted);
+  line-height: 1.8;
+}
+
+.hero-side .timeline-card + .timeline-card,
+.timeline-card + .timeline-card {
+  margin-top: 12px;
+}
+
+.timeline-card strong {
+  display: block;
+}
+
+.timeline-meta {
+  margin-top: 8px;
+  font-size: 0.84rem;
+  color: var(--muted);
+}
+
+.panel-head,
+.section-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.pagination {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.pagination .ghost-button.active {
+  border-color: rgba(76, 226, 255, 0.28);
+  background: rgba(24, 119, 242, 0.18);
+}
+
+.alert {
+  padding: 14px 16px;
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.05);
+  line-height: 1.7;
+}
+
+.alert.error {
+  border-color: rgba(251, 113, 133, 0.28);
+  background: rgba(251, 113, 133, 0.12);
+  color: #ffe4e8;
+}
+
+.alert.success {
+  border-color: rgba(52, 211, 153, 0.26);
+  background: rgba(52, 211, 153, 0.12);
+  color: #d1fae5;
+}
+
+.alert.info {
+  border-color: rgba(76, 226, 255, 0.26);
+  background: rgba(76, 226, 255, 0.1);
+  color: #dff9ff;
+}
+
+.split {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.overlay {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  display: grid;
+  gap: 10px;
+  z-index: 100;
+}
+
+.toast {
+  min-width: 260px;
+  max-width: 360px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  border: 1px solid var(--line);
+  background: rgba(7, 15, 30, 0.92);
+  box-shadow: var(--shadow);
+  color: var(--text);
+}
+
+.toast.success {
+  border-color: rgba(52, 211, 153, 0.26);
+}
+
+.toast.error {
+  border-color: rgba(251, 113, 133, 0.24);
+}
+
+.loader {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--muted);
+}
+
+.loader::before {
+  content: "";
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(184, 231, 255, 0.2);
+  border-top-color: var(--cyan);
+  border-radius: 999px;
+  animation: spin 0.9s linear infinite;
+}
+
+.qr-canvas-shell {
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  border-radius: 24px;
+  border: 1px dashed var(--line);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.qr-canvas-shell canvas {
+  background: white;
+  padding: 14px;
+  border-radius: 22px;
+}
+
+.repo-note {
+  border: 1px solid rgba(251, 191, 36, 0.22);
+  background: rgba(251, 191, 36, 0.08);
+  color: #fde68a;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 1100px) {
+  .hero,
+  .device-grid,
+  .detail-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 900px) {
+  .stats-grid,
+  .form-grid,
+  .checkbox-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .app-shell,
+  .boot-shell {
+    width: min(var(--content-width), calc(100% - 20px));
+  }
+
+  .hero-main,
+  .hero-side,
+  .panel-pad,
+  .boot-panel {
+    padding: 20px;
+  }
+}
+
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <main class="boot-shell">
+        <section class="boot-panel">
+          <p class="eyebrow">Booting Workspace</p>
+          <h1>Loading the GitHub + Supabase inventory console...</h1>
+          <p class="boot-copy">
+            This static app runs entirely in the browser and connects directly to your Supabase project.
+          </p>
+        </section>
+      </main>
+    </div>
+
+    <noscript>
+      <main class="boot-shell">
+        <section class="boot-panel">
+          <p class="eyebrow">JavaScript Required</p>
+          <h1>This app needs JavaScript enabled.</h1>
+          <p class="boot-copy">
+            GitHub Pages can serve this site statically, but the inventory system itself runs in the browser.
+          </p>
+        </section>
+      </main>
+    </noscript>
+
+    <script type="module">
+import QRCode from "https://esm.sh/qrcode@1.5.4";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.8";
+
+const SUPABASE_URL = "https://uifgmpglhpnyjhlwgihf.supabase.co";
+const SUPABASE_ANON_KEY =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVpZmdtcGdsaHBueWpobHdnaWhmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY2NTkwNzYsImV4cCI6MjA5MjIzNTA3Nn0.DrXRdfX6y7yx25xCZq8IlIO13aD-sNhfHgUQF6PLuPI";
+
+const APP_TITLE = "IT Inventory Management System";
+const ADMIN_PAGE_SIZE = 10;
+const DEVICE_HISTORY_BATCH = 5;
+const EXPORT_LIMIT = 1000;
+const LOOKUP_CACHE_KEY = "itims.lookup-cache.v1";
+const LOOKUP_CACHE_TTL_MS = 60 * 60 * 1000;
+const RESERVED_ROOTS = new Set(["admin", "device", "assets"]);
+
+function detectBasePath(pathname = window.location.pathname) {
+  const segments = pathname.split("/").filter(Boolean);
+  const isGithubPagesHost = /\.github\.io$/i.test(window.location.hostname);
+
+  if (!isGithubPagesHost || segments.length === 0) {
+    return "";
+  }
+
+  if (RESERVED_ROOTS.has(segments[0])) {
+    return "";
+  }
+
+  return `/${segments[0]}`;
+}
+
+function routeHref(path, query = {}) {
+  const params = new URLSearchParams();
+
+  Object.entries(query).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== "") {
+      params.set(key, String(value));
+    }
+  });
+
+  const suffix = params.toString() ? `?${params.toString()}` : "";
+  return `#${path}${suffix}`;
+}
+
+function absoluteHashUrl(path, query = {}) {
+  const basePath = detectBasePath();
+  const hash = routeHref(path, query);
+  return `${window.location.origin}${basePath}/${hash}`;
+}
+
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: true,
+  },
+});
+
+function escapeLikeValue(value) {
+  return value.replace(/[%_]/g, (char) => `\\${char}`);
+}
+
+function normalizeVisibility(visibility) {
+  if (visibility === "active" || visibility === "archived" || visibility === "all") {
+    return visibility;
+  }
+
+  return "all";
+}
+
+function applyDeviceFilters(query, { search, status, visibility }) {
+  const nextVisibility = normalizeVisibility(visibility);
+  let nextQuery = query;
+
+  if (nextVisibility === "active") {
+    nextQuery = nextQuery.eq("is_active", true);
+  } else if (nextVisibility === "archived") {
+    nextQuery = nextQuery.eq("is_active", false);
+  }
+
+  if (search) {
+    const keyword = escapeLikeValue(search.trim());
+    nextQuery = nextQuery.or(
+      `asset_code.ilike.%${keyword}%,device_name.ilike.%${keyword}%,serial_number.ilike.%${keyword}%`,
+    );
+  }
+
+  if (status) {
+    nextQuery = nextQuery.eq("status", status);
+  }
+
+  return nextQuery;
+}
+
+async function getSessionBundle() {
+  const {
+    data: { session },
+    error,
+  } = await supabase.auth.getSession();
+
+  if (error) {
+    throw error;
+  }
+
+  return session;
+}
+
+async function signInAdmin(email, password) {
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+}
+
+async function signOutAdmin() {
+  const { error } = await supabase.auth.signOut();
+
+  if (error) {
+    throw error;
+  }
+}
+
+async function getCurrentProfile(userId) {
+  if (!userId) {
+    return null;
+  }
+
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("id, full_name, role")
+    .eq("id", userId)
+    .maybeSingle();
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+}
+
+async function getLookupData(forceRefresh = false) {
+  if (!forceRefresh) {
+    const cached = window.sessionStorage.getItem(LOOKUP_CACHE_KEY);
+
+    if (cached) {
+      try {
+        const parsed = JSON.parse(cached);
+
+        if (Date.now() - parsed.timestamp < LOOKUP_CACHE_TTL_MS) {
+          return parsed.value;
+        }
+      } catch {
+        window.sessionStorage.removeItem(LOOKUP_CACHE_KEY);
+      }
+    }
+  }
+
+  const [departmentsResult, branchesResult, locationsResult] = await Promise.all([
+    supabase.from("departments").select("id, name, code").order("name"),
+    supabase.from("branches").select("id, name, code").order("name"),
+    supabase.from("locations").select("id, name, code, branch_id, floor_label").order("name"),
+  ]);
+
+  for (const result of [departmentsResult, branchesResult, locationsResult]) {
+    if (result.error) {
+      throw result.error;
+    }
+  }
+
+  const value = {
+    departments: departmentsResult.data ?? [],
+    branches: branchesResult.data ?? [],
+    locations: locationsResult.data ?? [],
+  };
+
+  window.sessionStorage.setItem(
+    LOOKUP_CACHE_KEY,
+    JSON.stringify({ timestamp: Date.now(), value }),
+  );
+
+  return value;
+}
+
+async function getDashboardCounts() {
+  const now = new Date();
+  const monthStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1)).toISOString();
+
+  const [devices, pendingRepairs, activeRepairs, transfers] = await Promise.all([
+    supabase.from("devices").select("id", { head: true, count: "exact" }).eq("is_active", true),
+    supabase.from("repair_requests").select("id", { head: true, count: "exact" }).eq("status", "Pending"),
+    supabase.from("repair_requests").select("id", { head: true, count: "exact" }).in("status", ["Approved", "In Progress"]),
+    supabase.from("transfer_histories").select("id", { head: true, count: "exact" }).gte("date_transferred", monthStart),
+  ]);
+
+  for (const result of [devices, pendingRepairs, activeRepairs, transfers]) {
+    if (result.error) {
+      throw result.error;
+    }
+  }
+
+  return {
+    totalDevices: devices.count ?? 0,
+    pendingRepairs: pendingRepairs.count ?? 0,
+    activeRepairs: activeRepairs.count ?? 0,
+    transfersThisMonth: transfers.count ?? 0,
+  };
+}
+
+async function getRecentDevices() {
+  const { data, error } = await supabase
+    .from("devices")
+    .select("id, asset_code, device_name, status, qr_slug, updated_at")
+    .eq("is_active", true)
+    .order("updated_at", { ascending: false })
+    .limit(5);
+
+  if (error) {
+    throw error;
+  }
+
+  return data ?? [];
+}
+
+async function getDevices(options = {}) {
+  const page = Math.max(1, Number(options.page ?? 1) || 1);
+  const from = (page - 1) * ADMIN_PAGE_SIZE;
+  const to = from + ADMIN_PAGE_SIZE - 1;
+
+  let query = supabase
+    .from("devices")
+    .select(
+      "id, asset_code, device_name, device_type, status, assigned_to, qr_slug, updated_at, is_active, departments(name), branches(name), locations(name)",
+      { count: "exact" },
+    );
+
+  query = applyDeviceFilters(query, options)
+    .order("updated_at", { ascending: false })
+    .range(from, to);
+
+  const { data, count, error } = await query;
+
+  if (error) {
+    throw error;
+  }
+
+  return {
+    data: data ?? [],
+    total: count ?? 0,
+    page,
+    pageSize: ADMIN_PAGE_SIZE,
+  };
+}
+
+async function getDevicesForExport(options = {}) {
+  let query = supabase
+    .from("devices")
+    .select(
+      "asset_code, device_name, device_type, brand, model, serial_number, assigned_to, status, qr_slug, is_active, created_at, updated_at, departments(name), branches(name), locations(name)",
+    );
+
+  query = applyDeviceFilters(query, options)
+    .order("updated_at", { ascending: false })
+    .limit(EXPORT_LIMIT);
+
+  const { data, error } = await query;
+
+  if (error) {
+    throw error;
+  }
+
+  return data ?? [];
+}
+
+async function getDeviceById(deviceId) {
+  const { data, error } = await supabase
+    .from("devices")
+    .select(
+      "id, asset_code, device_name, device_type, brand, model, serial_number, specifications, assigned_to, department_id, branch_id, location_id, origin, supplier, date_acquired, status, notes, qr_slug, show_serial_number_public, show_specifications_public, show_assignment_public, is_active, created_at, updated_at",
+    )
+    .eq("id", deviceId)
+    .maybeSingle();
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+}
+
+async function getDeviceBySlugForAdmin(qrSlug) {
+  const { data, error } = await supabase
+    .from("devices")
+    .select(
+      "id, asset_code, device_name, device_type, brand, model, serial_number, specifications, assigned_to, department_id, branch_id, location_id, origin, supplier, date_acquired, status, notes, qr_slug, show_serial_number_public, show_specifications_public, show_assignment_public, is_active, created_at, updated_at",
+    )
+    .eq("qr_slug", qrSlug)
+    .maybeSingle();
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+}
+
+async function saveDevice(payload, userId) {
+  const normalizedPayload = {
+    asset_code: payload.asset_code.trim(),
+    device_name: payload.device_name.trim(),
+    device_type: payload.device_type,
+    brand: payload.brand || null,
+    model: payload.model || null,
+    serial_number: payload.serial_number || null,
+    specifications: payload.specifications || null,
+    assigned_to: payload.assigned_to || null,
+    department_id: payload.department_id || null,
+    branch_id: payload.branch_id || null,
+    location_id: payload.location_id || null,
+    origin: payload.origin || null,
+    supplier: payload.supplier || null,
+    date_acquired: payload.date_acquired || null,
+    status: payload.status,
+    notes: payload.notes || null,
+    qr_slug: payload.qr_slug.trim(),
+    show_serial_number_public: Boolean(payload.show_serial_number_public),
+    show_specifications_public: Boolean(payload.show_specifications_public),
+    show_assignment_public: Boolean(payload.show_assignment_public),
+    updated_by: userId,
+  };
+
+  if (payload.id) {
+    const { data, error } = await supabase
+      .from("devices")
+      .update(normalizedPayload)
+      .eq("id", payload.id)
+      .select("id, qr_slug")
+      .single();
+
+    if (error) {
+      throw error;
+    }
+
+    return data;
+  }
+
+  const { data, error } = await supabase
+    .from("devices")
+    .insert({
+      ...normalizedPayload,
+      created_by: userId,
+    })
+    .select("id, qr_slug")
+    .single();
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+}
+
+async function archiveDevice(deviceId, userId) {
+  const { error } = await supabase
+    .from("devices")
+    .update({ is_active: false, updated_by: userId })
+    .eq("id", deviceId)
+    .eq("is_active", true);
+
+  if (error) {
+    throw error;
+  }
+}
+
+async function restoreDevice(deviceId, userId) {
+  const { error } = await supabase
+    .from("devices")
+    .update({ is_active: true, updated_by: userId })
+    .eq("id", deviceId)
+    .eq("is_active", false);
+
+  if (error) {
+    throw error;
+  }
+}
+
+async function getRepairs(options = {}) {
+  const page = Math.max(1, Number(options.page ?? 1) || 1);
+  const from = (page - 1) * ADMIN_PAGE_SIZE;
+  const to = from + ADMIN_PAGE_SIZE - 1;
+  const keyword = options.search ? escapeLikeValue(options.search.trim()) : null;
+
+  let query = supabase
+    .from("repair_requests")
+    .select(
+      "id, requester_name, department, priority, status, assigned_technician, requested_at, image_path, devices(asset_code, device_name, qr_slug)",
+      { count: "exact" },
+    )
+    .order("requested_at", { ascending: false });
+
+  if (options.status) {
+    query = query.eq("status", options.status);
+  }
+
+  if (keyword) {
+    query = query.or(`requester_name.ilike.%${keyword}%,problem_description.ilike.%${keyword}%`);
+  }
+
+  const { data, count, error } = await query.range(from, to);
+
+  if (error) {
+    throw error;
+  }
+
+  return {
+    data: data ?? [],
+    total: count ?? 0,
+    page,
+    pageSize: ADMIN_PAGE_SIZE,
+  };
+}
+
+async function getRepairById(repairId) {
+  const { data, error } = await supabase
+    .from("repair_requests")
+    .select(
+      "id, device_id, requester_name, department, contact_detail, problem_description, priority, image_path, status, remarks, assigned_technician, requested_at, updated_at, devices(id, asset_code, device_name, qr_slug, status)",
+    )
+    .eq("id", repairId)
+    .maybeSingle();
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+}
+
+async function updateRepairRequest(payload) {
+  const { data, error } = await supabase.rpc("admin_update_repair_request", {
+    p_request_id: payload.repair_id,
+    p_status: payload.status,
+    p_remarks: payload.remarks || null,
+    p_assigned_technician: payload.assigned_technician || null,
+    p_device_status: payload.device_status || null,
+  });
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+}
+
+async function getTransfers(options = {}) {
+  const page = Math.max(1, Number(options.page ?? 1) || 1);
+  const from = (page - 1) * ADMIN_PAGE_SIZE;
+  const to = from + ADMIN_PAGE_SIZE - 1;
+  const keyword = options.search ? escapeLikeValue(options.search.trim()) : null;
+
+  let query = supabase
+    .from("transfer_histories")
+    .select(
+      "id, device_id, from_assigned_to, to_assigned_to, from_department_name, to_department_name, from_branch_name, to_branch_name, from_location_name, to_location_name, reason, remarks, date_transferred, devices(asset_code, device_name, qr_slug)",
+      { count: "exact" },
+    )
+    .order("date_transferred", { ascending: false });
+
+  if (keyword) {
+    query = query.or(`to_assigned_to.ilike.%${keyword}%,reason.ilike.%${keyword}%`);
+  }
+
+  const { data, count, error } = await query.range(from, to);
+
+  if (error) {
+    throw error;
+  }
+
+  return {
+    data: data ?? [],
+    total: count ?? 0,
+    page,
+    pageSize: ADMIN_PAGE_SIZE,
+  };
+}
+
+async function createTransfer(payload) {
+  const { data, error } = await supabase.rpc("admin_create_transfer", {
+    p_device_id: payload.device_id,
+    p_to_assigned_to: payload.to_assigned_to || null,
+    p_to_department_id: payload.to_department_id || null,
+    p_to_branch_id: payload.to_branch_id || null,
+    p_to_location_id: payload.to_location_id || null,
+    p_reason: payload.reason,
+    p_remarks: payload.remarks || null,
+    p_approved_by: null,
+  });
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+}
+
+async function getHistory(options = {}) {
+  const page = Math.max(1, Number(options.page ?? 1) || 1);
+  const from = (page - 1) * ADMIN_PAGE_SIZE;
+  const to = from + ADMIN_PAGE_SIZE - 1;
+  const keyword = options.search ? escapeLikeValue(options.search.trim()) : null;
+
+  let query = supabase
+    .from("device_histories")
+    .select("id, action_type, description, actor_name, created_at, devices(asset_code, device_name, qr_slug)", {
+      count: "exact",
+    })
+    .order("created_at", { ascending: false });
+
+  if (keyword) {
+    query = query.or(`action_type.ilike.%${keyword}%,description.ilike.%${keyword}%`);
+  }
+
+  const { data, count, error } = await query.range(from, to);
+
+  if (error) {
+    throw error;
+  }
+
+  return {
+    data: data ?? [],
+    total: count ?? 0,
+    page,
+    pageSize: ADMIN_PAGE_SIZE,
+  };
+}
+
+async function getPublicDeviceSnapshot(qrSlug) {
+  const { data, error } = await supabase.rpc("public_get_device_by_slug", { p_slug: qrSlug }).maybeSingle();
+
+  if (error) {
+    throw error;
+  }
+
+  return data ?? null;
+}
+
+async function getPublicDeviceHistories(qrSlug, limit = DEVICE_HISTORY_BATCH, offset = 0) {
+  const { data, error } = await supabase.rpc("public_get_device_histories", {
+    p_slug: qrSlug,
+    p_limit: limit,
+    p_offset: offset,
+  });
+
+  if (error) {
+    throw error;
+  }
+
+  return data ?? [];
+}
+
+async function getPublicTransferHistories(qrSlug, limit = DEVICE_HISTORY_BATCH, offset = 0) {
+  const { data, error } = await supabase.rpc("public_get_transfer_histories", {
+    p_slug: qrSlug,
+    p_limit: limit,
+    p_offset: offset,
+  });
+
+  if (error) {
+    throw error;
+  }
+
+  return data ?? [];
+}
+
+async function getPublicRepairHistories(qrSlug, limit = DEVICE_HISTORY_BATCH, offset = 0) {
+  const { data, error } = await supabase.rpc("public_get_repair_histories", {
+    p_slug: qrSlug,
+    p_limit: limit,
+    p_offset: offset,
+  });
+
+  if (error) {
+    throw error;
+  }
+
+  return data ?? [];
+}
+
+async function submitRepairRequest(payload) {
+  const { data, error } = await supabase.rpc("public_submit_repair_request", {
+    p_qr_slug: payload.qr_slug,
+    p_requester_name: payload.requester_name,
+    p_department: payload.department || null,
+    p_contact_detail: payload.contact_detail,
+    p_problem_description: payload.problem_description,
+    p_priority: payload.priority,
+    p_image_path: payload.image_path || null,
+  });
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+}
+
+async function uploadRepairImage(qrSlug, file) {
+  const extension = file.type.includes("png") ? "png" : file.type.includes("webp") ? "webp" : "jpg";
+  const filePath = `public/${qrSlug}/${crypto.randomUUID()}.${extension}`;
+  const { error } = await supabase.storage.from("repair-images").upload(filePath, file, {
+    cacheControl: "3600",
+    upsert: false,
+    contentType: file.type || "image/jpeg",
+  });
+
+  if (error) {
+    throw error;
+  }
+
+  return filePath;
+}
+
+async function getSignedRepairImage(path) {
+  const { data, error } = await supabase.storage.from("repair-images").createSignedUrl(path, 60 * 10);
+
+  if (error) {
+    throw error;
+  }
+
+  return data.signedUrl;
+}
+
+function subscribeToAuthChanges(callback) {
+  const { data } = supabase.auth.onAuthStateChange((_event, session) => {
+    callback(session);
+  });
+
+  return () => {
+    data.subscription.unsubscribe();
+  };
+}
+
+
+const app = document.getElementById("app");
+
+const deviceStatuses = ["Available", "Assigned", "In Repair", "In Storage", "Retired"];
+const deviceTypes = ["Desktop", "Laptop", "Printer", "Router", "Switch", "Monitor", "UPS", "Other"];
+const repairPriorities = ["Low", "Medium", "High", "Critical"];
+const repairStatuses = ["Pending", "Approved", "In Progress", "Completed", "Rejected"];
+const historyBadgeStyles = {
+  Created: "badge info",
+  Updated: "badge slate",
+  "Status Changed": "badge amber",
+  "Notes Changed": "badge info",
+  "Repair Requested": "badge rose",
+  "Repair Updated": "badge rose",
+  Transferred: "badge info",
+  Archived: "badge archived",
+};
+
+const state = {
+  session: null,
+  user: null,
+  profile: null,
+  renderToken: 0,
+  pendingRoute: null,
+  toastTimer: null,
+  toasts: [],
+};
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function slugify(value) {
+  return String(value ?? "")
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 80);
+}
+
+function formatDate(value) {
+  if (!value) return "Not available";
+  return new Intl.DateTimeFormat("en-US", { dateStyle: "medium" }).format(new Date(value));
+}
+
+function formatDateTime(value) {
+  if (!value) return "Not available";
+  return new Intl.DateTimeFormat("en-US", { dateStyle: "medium", timeStyle: "short" }).format(
+    new Date(value),
+  );
+}
+
+function toNullable(value) {
+  const trimmed = String(value ?? "").trim();
+  return trimmed ? trimmed : null;
+}
+
+function boolFromForm(formData, key) {
+  return formData.get(key) === "on";
+}
+
+function getRoute() {
+  const raw = window.location.hash.replace(/^#/, "") || "/";
+  const [pathPart, queryString = ""] = raw.split("?");
+  const path = pathPart.startsWith("/") ? pathPart : `/${pathPart}`;
+  const query = Object.fromEntries(new URLSearchParams(queryString).entries());
+  return { path, query };
+}
+
+function go(path, query = {}, replace = false) {
+  const href = routeHref(path, query);
+
+  if (replace) {
+    window.location.replace(href);
+  } else {
+    window.location.hash = href.slice(1);
+  }
+}
+
+function replaceRoute(path, query = {}) {
+  const nextHash = routeHref(path, query);
+  const basePath = detectBasePath();
+  history.replaceState({}, "", `${basePath}/${nextHash}`);
+  renderRoute();
+}
+
+function isAdmin() {
+  return state.profile?.role === "admin";
+}
+
+function userLabel() {
+  return state.profile?.full_name || state.user?.email || "Guest";
+}
+
+function toast(message, type = "info") {
+  state.toasts = [...state.toasts, { id: crypto.randomUUID(), message, type }].slice(-3);
+  renderToasts();
+
+  if (state.toastTimer) {
+    window.clearTimeout(state.toastTimer);
+  }
+
+  state.toastTimer = window.setTimeout(() => {
+    state.toasts = [];
+    renderToasts();
+  }, 3200);
+}
+
+function renderToasts() {
+  const overlay = document.querySelector("[data-toast-root]");
+  if (!overlay) return;
+
+  overlay.innerHTML = state.toasts
+    .map(
+      (item) => `
+        <div class="toast ${escapeHtml(item.type)}">
+          ${escapeHtml(item.message)}
+        </div>
+      `,
+    )
+    .join("");
+}
+
+function shell(mainContent, options = {}) {
+  const route = getRoute();
+  const showAdminNav = isAdmin();
+  const isAdminLogin = route.path === "/admin/login";
+  const navLinks = showAdminNav
+    ? [
+        ["/admin/dashboard", "Dashboard"],
+        ["/admin/devices", "Devices"],
+        ["/admin/repairs", "Repairs"],
+        ["/admin/transfers", "Transfers"],
+        ["/admin/history", "History"],
+      ]
+    : [];
+
+  return `
+    <main class="app-shell">
+      <section class="panel">
+        <div class="panel-pad topbar">
+          <div class="brand">
+            <div class="brand-mark">IT</div>
+            <div class="brand-copy">
+              <h1>${escapeHtml(APP_TITLE)}</h1>
+              <p>Static GitHub Pages build with Supabase browser auth and RLS-backed workflows</p>
+            </div>
+          </div>
+          <div class="top-actions">
+            <a class="ghost-button" href="${routeHref("/")}">Home</a>
+            ${
+              state.user
+                ? `
+                  <span class="ghost-button">${escapeHtml(userLabel())}</span>
+                  <button class="ghost-button" data-action="sign-out">Sign Out</button>
+                `
+                : isAdminLogin
+                  ? ""
+                  : `<a class="ghost-button" href="${routeHref("/admin/login")}">Admin Login</a>`
+            }
+          </div>
+        </div>
+      </section>
+
+      ${
+        navLinks.length
+          ? `
+            <section class="panel">
+              <div class="panel-pad nav-links">
+                ${navLinks
+                  .map(
+                    ([path, label]) =>
+                      `<a href="${routeHref(path)}" class="${
+                        route.path === path || route.path.startsWith(`${path}/`) ? "active" : ""
+                      }">${escapeHtml(label)}</a>`,
+                  )
+                  .join("")}
+              </div>
+            </section>
+          `
+          : ""
+      }
+
+      ${options.alert ? `<section class="alert ${escapeHtml(options.alert.type)}">${escapeHtml(options.alert.message)}</section>` : ""}
+      ${mainContent}
+      <div class="overlay" data-toast-root></div>
+    </main>
+  `;
+}
+
+function loadingShell(label = "Loading data...") {
+  return shell(`
+    <section class="panel">
+      <div class="panel-pad">
+        <div class="loader">${escapeHtml(label)}</div>
+      </div>
+    </section>
+  `);
+}
+
+function emptyState(title, body, actions = "") {
+  return `
+    <div class="empty-state">
+      <strong>${escapeHtml(title)}</strong>
+      <p>${escapeHtml(body)}</p>
+      ${actions ? `<div class="action-row" style="margin-top: 16px;">${actions}</div>` : ""}
+    </div>
+  `;
+}
+
+function renderMetricCard(label, value, helper) {
+  return `
+    <div class="metric-card">
+      <p class="eyebrow">${escapeHtml(label)}</p>
+      <strong class="metric-value">${escapeHtml(value)}</strong>
+      <p class="metric-help">${escapeHtml(helper)}</p>
+    </div>
+  `;
+}
+
+function renderBadge(text, type = "info") {
+  return `<span class="badge ${escapeHtml(type)}">${escapeHtml(text)}</span>`;
+}
+
+function renderHistoryBadge(action) {
+  return `<span class="${historyBadgeStyles[action] ?? "badge slate"}">${escapeHtml(action)}</span>`;
+}
+
+function renderPagination(path, query, currentPage, totalPages) {
+  if (totalPages <= 1) return "";
+
+  const items = [];
+  const start = Math.max(1, currentPage - 2);
+  const end = Math.min(totalPages, currentPage + 2);
+
+  items.push(
+    `<a class="ghost-button ${currentPage === 1 ? "hidden" : ""}" href="${routeHref(path, {
+      ...query,
+      page: Math.max(1, currentPage - 1),
+    })}">Previous</a>`,
+  );
+
+  for (let page = start; page <= end; page += 1) {
+    items.push(
+      `<a class="ghost-button ${page === currentPage ? "active" : ""}" href="${routeHref(path, {
+        ...query,
+        page,
+      })}">${page}</a>`,
+    );
+  }
+
+  items.push(
+    `<a class="ghost-button ${currentPage === totalPages ? "hidden" : ""}" href="${routeHref(path, {
+      ...query,
+      page: Math.min(totalPages, currentPage + 1),
+    })}">Next</a>`,
+  );
+
+  return `<div class="pagination">${items.join("")}</div>`;
+}
+
+function parseDeviceRoute(path) {
+  const deviceMatch = path.match(/^\/device\/([^/]+)$/);
+  if (deviceMatch) {
+    return { kind: "public-device", slug: decodeURIComponent(deviceMatch[1]) };
+  }
+
+  const editMatch = path.match(/^\/device\/([^/]+)\/edit$/);
+  if (editMatch) {
+    return { kind: "public-device-edit", slug: decodeURIComponent(editMatch[1]) };
+  }
+
+  return null;
+}
+
+function parseAdminDeviceRoute(path) {
+  if (path === "/admin/devices/new") {
+    return { kind: "admin-device-form", id: null };
+  }
+
+  const editMatch = path.match(/^\/admin\/devices\/([^/]+)\/edit$/);
+  if (editMatch) {
+    return { kind: "admin-device-form", id: decodeURIComponent(editMatch[1]) };
+  }
+
+  return null;
+}
+
+function parseAdminRepairRoute(path) {
+  const detailMatch = path.match(/^\/admin\/repairs\/([^/]+)$/);
+  if (detailMatch) {
+    return { kind: "admin-repair-detail", id: decodeURIComponent(detailMatch[1]) };
+  }
+
+  return null;
+}
+
+async function ensureAuthHydrated() {
+  const session = await getSessionBundle();
+  state.session = session;
+  state.user = session?.user ?? null;
+  state.profile = state.user ? await getCurrentProfile(state.user.id) : null;
+}
+
+function normalizeRedirectedRoute() {
+  const searchParams = new URLSearchParams(window.location.search);
+  const incoming = searchParams.get("route");
+
+  if (!incoming || window.location.hash) {
+    return;
+  }
+
+  const basePath = detectBasePath();
+  const nextHash = incoming.startsWith("/") ? `#${incoming}` : `#/${incoming}`;
+  history.replaceState({}, "", `${basePath}/${nextHash}`);
+}
+
+function requireAdminRoute(targetPath, query = {}) {
+  const fullPath = `${targetPath}${new URLSearchParams(query).toString() ? `?${new URLSearchParams(query).toString()}` : ""}`;
+  state.pendingRoute = fullPath;
+  replaceRoute("/admin/login", { next: fullPath });
+}
+
+function renderHomePage() {
+  const dashboardLink = isAdmin() ? routeHref("/admin/dashboard") : routeHref("/admin/login");
+
+  return shell(`
+    <section class="hero">
+      <div class="panel hero-main">
+        <p class="eyebrow">GitHub Standalone Mode</p>
+        <h2 class="hero-title">Futuristic IT inventory operations running directly from GitHub Pages + Supabase.</h2>
+        <p class="hero-copy">
+          This version is fully static on the hosting side. The browser handles routing, authentication,
+          device lookups, repair requests, transfers, and admin workflows directly against Supabase with
+          row-level security doing the protection work.
+        </p>
+        <div class="action-row" style="margin-top: 24px;">
+          <a class="button primary" href="${dashboardLink}">${isAdmin() ? "Open Admin Dashboard" : "Admin Login"}</a>
+          <a class="button secondary" href="${routeHref("/admin/devices")}">Browse Devices</a>
+        </div>
+        <div class="stats-grid" style="margin-top: 24px;">
+          <div class="stat-card">
+            <strong>0</strong>
+            <span>No server runtime required on GitHub Pages</span>
+          </div>
+          <div class="stat-card">
+            <strong>5</strong>
+            <span>Initial history items loaded on public device pages</span>
+          </div>
+          <div class="stat-card">
+            <strong>10</strong>
+            <span>Rows per admin table page to keep queries lean</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel hero-side">
+        <p class="eyebrow">What Stays Lightweight</p>
+        <div class="timeline" style="margin-top: 18px;">
+          <div class="timeline-card">
+            <strong>Public QR page</strong>
+            <p class="muted">Loads only the device snapshot and the first small batch of history, transfers, and repairs.</p>
+          </div>
+          <div class="timeline-card">
+            <strong>Repair workflow</strong>
+            <p class="muted">Optional images are compressed in-browser before upload to Supabase Storage.</p>
+          </div>
+          <div class="timeline-card">
+            <strong>Admin dashboard</strong>
+            <p class="muted">Cards use count-only queries and tables stay paginated with manual filtering.</p>
+          </div>
+          <div class="timeline-card">
+            <strong>QR generation</strong>
+            <p class="muted">QRs are generated on the client and never stored as image files.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  `);
+}
+
+async function renderAdminLoginPage(query) {
+  if (isAdmin()) {
+    return shell(`
+      <section class="panel">
+        <div class="panel-pad">
+          <p class="eyebrow">Already Signed In</p>
+          <h2 class="section-title">You already have admin access.</h2>
+          <p class="section-copy">Jump straight back into the dashboard or device management.</p>
+          <div class="action-row" style="margin-top: 20px;">
+            <a class="button primary" href="${routeHref("/admin/dashboard")}">Open Dashboard</a>
+            <a class="button secondary" href="${routeHref("/admin/devices")}">Open Devices</a>
+          </div>
+        </div>
+      </section>
+    `);
+  }
+
+  return shell(`
+    <section class="page-grid">
+      <section class="panel">
+        <div class="panel-pad">
+          <p class="eyebrow">Admin Security</p>
+          <h2 class="section-title">Sign in before editing devices, repairs, or transfers.</h2>
+          <p class="section-copy">
+            Public QR pages remain open, but every sensitive inventory action requires an authenticated
+            admin profile from Supabase Auth and the <code>profiles.role = 'admin'</code> check.
+          </p>
+        </div>
+      </section>
+
+      <section class="panel form-shell">
+        <div class="panel-pad">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Admin Login</p>
+              <h3 class="panel-title">Secure browser-side session</h3>
+            </div>
+          </div>
+          <form id="admin-login-form" class="form-grid" style="margin-top: 20px;">
+            <div class="field full">
+              <label for="login-email">Admin Email</label>
+              <input class="input" id="login-email" name="email" type="email" required />
+            </div>
+            <div class="field full">
+              <label for="login-password">Password</label>
+              <input class="input" id="login-password" name="password" type="password" required />
+            </div>
+            <input type="hidden" name="next" value="${escapeHtml(query.next ?? "")}" />
+            <div class="action-row full">
+              <button class="button primary" type="submit">Sign In</button>
+            </div>
+          </form>
+          <p class="helper-text">If you can sign in but still cannot access admin pages, promote the user in Supabase using <code>public.promote_user_to_admin(...)</code>.</p>
+        </div>
+      </section>
+    </section>
+  `);
+}
+
+async function renderAdminDashboardPage() {
+  const [counts, recentDevices] = await Promise.all([getDashboardCounts(), getRecentDevices()]);
+
+  return shell(`
+    <section class="page-grid">
+      <section class="panel">
+        <div class="panel-pad">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Dashboard</p>
+              <h2 class="section-title">Low-egress admin control center</h2>
+              <p class="section-copy">Counts are fetched with head-only queries and the recent device feed stays small.</p>
+            </div>
+          </div>
+          <div class="stats-grid" style="margin-top: 22px;">
+            ${renderMetricCard("Active Devices", counts.totalDevices, "Count query only")}
+            ${renderMetricCard("Pending Repairs", counts.pendingRepairs, "Waiting for approval")}
+            ${renderMetricCard("Active Repairs", counts.activeRepairs, "Approved or in progress")}
+            ${renderMetricCard("Transfers This Month", counts.transfersThisMonth, "Current month only")}
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-pad">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Recently Updated</p>
+              <h3 class="panel-title">Latest device activity</h3>
+            </div>
+            <a class="button secondary" href="${routeHref("/admin/devices")}">Manage Devices</a>
+          </div>
+          <div class="timeline" style="margin-top: 20px;">
+            ${
+              recentDevices.length
+                ? recentDevices
+                    .map(
+                      (device) => `
+                        <div class="timeline-card">
+                          <div class="split">
+                            <strong>${escapeHtml(device.asset_code)} · ${escapeHtml(device.device_name)}</strong>
+                            ${renderBadge(device.status, "info")}
+                          </div>
+                          <p class="muted">Updated ${escapeHtml(formatDateTime(device.updated_at))}</p>
+                          <div class="action-row" style="margin-top: 12px;">
+                            <a class="tiny-link" href="${routeHref(`/device/${encodeURIComponent(device.qr_slug)}`)}">Open QR Page</a>
+                            <a class="tiny-link" href="${routeHref(`/admin/devices/${encodeURIComponent(device.id)}/edit`)}">Edit Device</a>
+                          </div>
+                        </div>
+                      `,
+                    )
+                    .join("")
+                : emptyState(
+                    "No devices yet",
+                    "Create your first device to start the QR workflow and dashboard activity feed.",
+                    `<a class="button primary" href="${routeHref("/admin/devices/new")}">Create Device</a>`,
+                  )
+            }
+          </div>
+        </div>
+      </section>
+    </section>
+  `);
+}
+
+function renderDeviceTableRows(devices) {
+  return devices
+    .map(
+      (device) => `
+        <tr>
+          <td>
+            <strong>${escapeHtml(device.asset_code)} · ${escapeHtml(device.device_name)}</strong>
+            <div class="muted">${escapeHtml(device.qr_slug)}</div>
+          </td>
+          <td>${escapeHtml(device.device_type)}</td>
+          <td>
+            ${escapeHtml(device.assigned_to ?? "Unassigned")}
+            <div class="muted">
+              ${escapeHtml(device.departments?.name ?? "No department")} /
+              ${escapeHtml(device.branches?.name ?? "No branch")} /
+              ${escapeHtml(device.locations?.name ?? "No location")}
+            </div>
+          </td>
+          <td>
+            <div class="chip-row">
+              ${renderBadge(device.status, "info")}
+              ${renderBadge(device.is_active ? "Active" : "Archived", device.is_active ? "active" : "archived")}
+            </div>
+          </td>
+          <td>${escapeHtml(formatDateTime(device.updated_at))}</td>
+          <td>
+            <div class="helper-list">
+              <a class="tiny-link" href="${routeHref(`/admin/devices/${encodeURIComponent(device.id)}/edit`)}">Edit</a>
+              ${
+                device.is_active
+                  ? `
+                    <a class="tiny-link" href="${routeHref(`/device/${encodeURIComponent(device.qr_slug)}`)}">QR Page</a>
+                    <a class="tiny-link" href="${routeHref("/admin/transfers", { device: device.id })}">Transfer</a>
+                    <button class="tiny-link danger" data-action="archive-device" data-device-id="${escapeHtml(device.id)}">Archive</button>
+                  `
+                  : `
+                    <span class="muted">Public hidden</span>
+                    <button class="tiny-link success" data-action="restore-device" data-device-id="${escapeHtml(device.id)}">Restore</button>
+                  `
+              }
+            </div>
+          </td>
+        </tr>
+      `,
+    )
+    .join("");
+}
+
+async function renderAdminDevicesPage(query) {
+  const page = Number(query.page ?? 1) || 1;
+  const visibility = query.visibility || "all";
+  const result = await getDevices({
+    page,
+    search: query.q,
+    status: query.status,
+    visibility,
+  });
+  const totalPages = Math.max(1, Math.ceil(result.total / ADMIN_PAGE_SIZE));
+
+  return shell(`
+    <section class="page-grid">
+      <section class="panel">
+        <div class="panel-pad">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Inventory Feed</p>
+              <h2 class="section-title">Archive-safe device management</h2>
+              <p class="section-copy">Archived records stay recoverable and visible to admins instead of disappearing like deletes.</p>
+            </div>
+            <div class="page-actions">
+              <button class="button secondary" data-action="export-devices">CSV</button>
+              <a class="button primary" href="${routeHref("/admin/devices/new")}">Add Device</a>
+            </div>
+          </div>
+
+          <div class="chip-row" style="margin-top: 20px;">
+            <a href="${routeHref("/admin/devices", { ...query, page: 1, visibility: "all" })}" class="chip ${visibility === "all" ? "active" : ""}">All Devices</a>
+            <a href="${routeHref("/admin/devices", { ...query, page: 1, visibility: "active" })}" class="chip ${visibility === "active" ? "active" : ""}">Active Only</a>
+            <a href="${routeHref("/admin/devices", { ...query, page: 1, visibility: "archived" })}" class="chip ${visibility === "archived" ? "active" : ""}">Archived Only</a>
+          </div>
+
+          <div class="filter-row" style="margin-top: 18px;">
+            <div class="field" style="min-width: min(360px, 100%); flex: 1;">
+              <label for="device-search">Search Devices</label>
+              <input class="input" id="device-search" data-search-route="/admin/devices" data-preserve="status,visibility" type="search" value="${escapeHtml(query.q ?? "")}" placeholder="Asset code, name, or serial number" />
+            </div>
+            <div class="field" style="min-width: 220px;">
+              <label for="device-status-filter">Status</label>
+              <select class="select" id="device-status-filter" data-filter-route="/admin/devices" data-preserve="q,visibility">
+                <option value="">All statuses</option>
+                ${deviceStatuses
+                  .map(
+                    (status) =>
+                      `<option value="${escapeHtml(status)}" ${query.status === status ? "selected" : ""}>${escapeHtml(status)}</option>`,
+                  )
+                  .join("")}
+              </select>
+            </div>
+          </div>
+
+          <div class="alert info" style="margin-top: 18px;">Archived devices are hidden from the public QR route until restored.</div>
+
+          <div class="table-shell" style="margin-top: 20px;">
+            <div class="table-scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Asset</th>
+                    <th>Type</th>
+                    <th>Assignment</th>
+                    <th>Status</th>
+                    <th>Updated</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${
+                    result.data.length
+                      ? renderDeviceTableRows(result.data)
+                      : `<tr><td colspan="6">${emptyState("No devices matched", "Try changing filters or add your first device.")}</td></tr>`
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          ${renderPagination("/admin/devices", { ...query, visibility }, result.page, totalPages)}
+        </div>
+      </section>
+    </section>
+  `);
+}
+
+function renderDeviceForm(device, lookups, qrUrl) {
+  const formTitle = device?.id ? "Edit Device" : "Create Device";
+  const submitLabel = device?.id ? "Save Device" : "Create Device";
+
+  return `
+    <section class="device-grid">
+      <section class="panel form-shell">
+        <div class="panel-pad">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Device Editor</p>
+              <h2 class="section-title">${escapeHtml(formTitle)}</h2>
+              <p class="section-copy">All major edits are logged automatically by database triggers.</p>
+            </div>
+          </div>
+
+          <form id="device-form" class="form-grid" style="margin-top: 22px;">
+            <input type="hidden" name="deviceId" value="${escapeHtml(device?.id ?? "")}" />
+            <div class="field">
+              <label for="asset_code">Asset Code</label>
+              <input class="input" id="asset_code" name="asset_code" required value="${escapeHtml(device?.asset_code ?? "")}" />
+            </div>
+            <div class="field">
+              <label for="qr_slug">QR Slug</label>
+              <input class="input" id="qr_slug" name="qr_slug" value="${escapeHtml(device?.qr_slug ?? "")}" placeholder="Auto-generated if blank" />
+            </div>
+            <div class="field">
+              <label for="device_name">Device Name</label>
+              <input class="input" id="device_name" name="device_name" required value="${escapeHtml(device?.device_name ?? "")}" />
+            </div>
+            <div class="field">
+              <label for="device_type">Device Type</label>
+              <select class="select" id="device_type" name="device_type" required>
+                ${deviceTypes
+                  .map(
+                    (type) =>
+                      `<option value="${escapeHtml(type)}" ${(device?.device_type ?? "Laptop") === type ? "selected" : ""}>${escapeHtml(type)}</option>`,
+                  )
+                  .join("")}
+              </select>
+            </div>
+            <div class="field">
+              <label for="brand">Brand</label>
+              <input class="input" id="brand" name="brand" value="${escapeHtml(device?.brand ?? "")}" />
+            </div>
+            <div class="field">
+              <label for="model">Model</label>
+              <input class="input" id="model" name="model" value="${escapeHtml(device?.model ?? "")}" />
+            </div>
+            <div class="field">
+              <label for="serial_number">Serial Number</label>
+              <input class="input" id="serial_number" name="serial_number" value="${escapeHtml(device?.serial_number ?? "")}" />
+            </div>
+            <div class="field">
+              <label for="status">Status</label>
+              <select class="select" id="status" name="status" required>
+                ${deviceStatuses
+                  .map(
+                    (status) =>
+                      `<option value="${escapeHtml(status)}" ${(device?.status ?? "Available") === status ? "selected" : ""}>${escapeHtml(status)}</option>`,
+                  )
+                  .join("")}
+              </select>
+            </div>
+            <div class="field">
+              <label for="assigned_to">Assigned To</label>
+              <input class="input" id="assigned_to" name="assigned_to" value="${escapeHtml(device?.assigned_to ?? "")}" />
+            </div>
+            <div class="field">
+              <label for="origin">Origin</label>
+              <input class="input" id="origin" name="origin" value="${escapeHtml(device?.origin ?? "")}" placeholder="Purchased / Donated / Transferred" />
+            </div>
+            <div class="field">
+              <label for="department_id">Department</label>
+              <select class="select" id="department_id" name="department_id">
+                <option value="">Unassigned</option>
+                ${lookups.departments
+                  .map(
+                    (department) =>
+                      `<option value="${escapeHtml(department.id)}" ${device?.department_id === department.id ? "selected" : ""}>${escapeHtml(department.name)}</option>`,
+                  )
+                  .join("")}
+              </select>
+            </div>
+            <div class="field">
+              <label for="branch_id">Branch</label>
+              <select class="select" id="branch_id" name="branch_id">
+                <option value="">Unassigned</option>
+                ${lookups.branches
+                  .map(
+                    (branch) =>
+                      `<option value="${escapeHtml(branch.id)}" ${device?.branch_id === branch.id ? "selected" : ""}>${escapeHtml(branch.name)}</option>`,
+                  )
+                  .join("")}
+              </select>
+            </div>
+            <div class="field">
+              <label for="location_id">Location</label>
+              <select class="select" id="location_id" name="location_id">
+                <option value="">Unassigned</option>
+                ${lookups.locations
+                  .map(
+                    (location) =>
+                      `<option value="${escapeHtml(location.id)}" data-branch-id="${escapeHtml(location.branch_id)}" ${device?.location_id === location.id ? "selected" : ""}>${escapeHtml(location.name)}</option>`,
+                  )
+                  .join("")}
+              </select>
+            </div>
+            <div class="field">
+              <label for="supplier">Supplier</label>
+              <input class="input" id="supplier" name="supplier" value="${escapeHtml(device?.supplier ?? "")}" />
+            </div>
+            <div class="field full">
+              <label for="specifications">Specifications</label>
+              <textarea class="textarea" id="specifications" name="specifications" placeholder="CPU / RAM / Storage / Ports / Warranty">${escapeHtml(device?.specifications ?? "")}</textarea>
+            </div>
+            <div class="field">
+              <label for="date_acquired">Date Acquired</label>
+              <input class="input" id="date_acquired" name="date_acquired" type="date" value="${escapeHtml(device?.date_acquired ?? "")}" />
+            </div>
+            <div class="field full">
+              <label for="notes">Notes</label>
+              <textarea class="textarea" id="notes" name="notes">${escapeHtml(device?.notes ?? "")}</textarea>
+            </div>
+            <div class="field full">
+              <label>Public QR Visibility</label>
+              <div class="checkbox-grid">
+                <label class="checkbox-card">
+                  <input type="checkbox" name="show_serial_number_public" ${device?.show_serial_number_public ? "checked" : ""} />
+                  <span><strong>Serial Number</strong>Expose serial on the public device page.</span>
+                </label>
+                <label class="checkbox-card">
+                  <input type="checkbox" name="show_specifications_public" ${device?.show_specifications_public === false ? "" : "checked"} />
+                  <span><strong>Specifications</strong>Expose specs on the public device page.</span>
+                </label>
+                <label class="checkbox-card">
+                  <input type="checkbox" name="show_assignment_public" ${device?.show_assignment_public === false ? "" : "checked"} />
+                  <span><strong>Assignment</strong>Expose assigned user, department, and location.</span>
+                </label>
+              </div>
+            </div>
+            <div class="action-row full">
+              <button class="button primary" type="submit">${escapeHtml(submitLabel)}</button>
+              <a class="button secondary" href="${routeHref("/admin/devices")}">Back</a>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <section class="panel detail-shell">
+        <div class="panel-pad">
+          <p class="eyebrow">Dynamic QR</p>
+          <h3 class="panel-title">Printable device label</h3>
+          <p class="section-copy">QR images are generated locally in the browser and never stored in Supabase.</p>
+          <div class="qr-canvas-shell" style="margin-top: 20px;">
+            <canvas id="device-qr-canvas" width="240" height="240"></canvas>
+          </div>
+          <div class="helper-list" style="margin-top: 18px;">
+            <p><strong>Public URL:</strong> <span class="muted">${escapeHtml(qrUrl)}</span></p>
+            <div class="action-row">
+              <button class="button secondary" type="button" data-action="print-qr">Print QR</button>
+              <a class="button secondary" href="${routeHref(`/device/${encodeURIComponent(device?.qr_slug || slugify(device?.asset_code || ""))}`)}">Preview Public Page</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </section>
+  `;
+}
+
+async function renderAdminDeviceFormPage(id) {
+  const lookups = await getLookupData();
+  const device = id ? await getDeviceById(id) : null;
+
+  if (id && !device) {
+    return shell(`
+      <section class="panel">
+        <div class="panel-pad">
+          ${emptyState("Device not found", "This device could not be loaded for editing.")}
+        </div>
+      </section>
+    `);
+  }
+
+  const slugSource = device?.qr_slug || slugify(device?.asset_code || "");
+  const qrUrl = absoluteHashUrl(`/device/${slugSource}`);
+
+  return shell(renderDeviceForm(device, lookups, qrUrl));
+}
+
+function renderPublicActivityCards(historyItems, transferItems, repairItems, slug) {
+  const historyHtml = historyItems.length
+    ? historyItems
+        .map(
+          (item) => `
+            <div class="timeline-card">
+              <div class="split">
+                ${renderHistoryBadge(item.action_type)}
+                <span class="muted">${escapeHtml(formatDateTime(item.created_at))}</span>
+              </div>
+              <p style="margin-top: 12px;">${escapeHtml(item.description)}</p>
+              ${item.actor_name ? `<p class="timeline-meta">By ${escapeHtml(item.actor_name)}</p>` : ""}
+            </div>
+          `,
+        )
+        .join("")
+    : emptyState("No history yet", "No device history has been recorded yet.");
+
+  const transferHtml = transferItems.length
+    ? transferItems
+        .map(
+          (item) => `
+            <div class="timeline-card">
+              <div class="split">
+                <strong>${escapeHtml(item.from_assigned_to ?? "Unassigned")} → ${escapeHtml(item.to_assigned_to ?? "Unassigned")}</strong>
+                <span class="muted">${escapeHtml(formatDateTime(item.date_transferred))}</span>
+              </div>
+              <p class="timeline-meta">${escapeHtml(item.from_department_name ?? "No department")} / ${escapeHtml(item.from_branch_name ?? "No branch")} / ${escapeHtml(item.from_location_name ?? "No location")}</p>
+              <p class="timeline-meta">${escapeHtml(item.to_department_name ?? "No department")} / ${escapeHtml(item.to_branch_name ?? "No branch")} / ${escapeHtml(item.to_location_name ?? "No location")}</p>
+              ${item.reason ? `<p style="margin-top: 10px;">${escapeHtml(item.reason)}</p>` : ""}
+            </div>
+          `,
+        )
+        .join("")
+    : emptyState("No transfers yet", "No transfer history is available for this device.");
+
+  const repairHtml = repairItems.length
+    ? repairItems
+        .map(
+          (item) => `
+            <div class="timeline-card">
+              <div class="split">
+                <div class="chip-row">
+                  ${renderBadge(item.status, "rose")}
+                  ${renderBadge(item.priority, "amber")}
+                </div>
+                <span class="muted">${escapeHtml(formatDateTime(item.requested_at))}</span>
+              </div>
+              <p style="margin-top: 12px;">${escapeHtml(item.problem_description)}</p>
+              ${item.assigned_technician ? `<p class="timeline-meta">Technician: ${escapeHtml(item.assigned_technician)}</p>` : ""}
+            </div>
+          `,
+        )
+        .join("")
+    : emptyState("No repairs yet", "No repair history is available for this device.");
+
+  return `
+    <section class="detail-grid">
+      <section class="panel">
+        <div class="panel-pad">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Recent Device History</p>
+              <h3 class="panel-title">Audit trail</h3>
+            </div>
+            <button class="ghost-button" data-action="load-history" data-slug="${escapeHtml(slug)}" data-offset="${historyItems.length}">Load More</button>
+          </div>
+          <div class="timeline" id="history-list" style="margin-top: 20px;">${historyHtml}</div>
+        </div>
+      </section>
+      <section class="panel">
+        <div class="panel-pad">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Recent Transfers</p>
+              <h3 class="panel-title">Assignment movement</h3>
+            </div>
+            <button class="ghost-button" data-action="load-transfers" data-slug="${escapeHtml(slug)}" data-offset="${transferItems.length}">Load More</button>
+          </div>
+          <div class="timeline" id="transfer-list" style="margin-top: 20px;">${transferHtml}</div>
+        </div>
+      </section>
+    </section>
+
+    <section class="panel">
+      <div class="panel-pad">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Recent Repairs</p>
+            <h3 class="panel-title">Repair history</h3>
+          </div>
+          <button class="ghost-button" data-action="load-repairs" data-slug="${escapeHtml(slug)}" data-offset="${repairItems.length}">Load More</button>
+        </div>
+        <div class="timeline" id="repair-list" style="margin-top: 20px;">${repairHtml}</div>
+      </div>
+    </section>
+  `;
+}
+
+async function renderPublicDevicePage(slug) {
+  const [device, histories, transfers, repairs] = await Promise.all([
+    getPublicDeviceSnapshot(slug),
+    getPublicDeviceHistories(slug),
+    getPublicTransferHistories(slug),
+    getPublicRepairHistories(slug),
+  ]);
+
+  if (!device) {
+    return shell(`
+      <section class="panel">
+        <div class="panel-pad">
+          ${emptyState(
+            "Device not found",
+            "This QR slug may be archived, mistyped, or not yet present in your Supabase inventory.",
+            `<a class="button secondary" href="${routeHref("/")}">Back Home</a>`,
+          )}
+        </div>
+      </section>
+    `);
+  }
+
+  return shell(`
+    <section class="page-grid">
+      <section class="device-grid">
+        <section class="panel">
+          <div class="panel-pad">
+            <div class="section-head">
+              <div>
+                <p class="eyebrow">Device Snapshot</p>
+                <h2 class="section-title">${escapeHtml(device.asset_code)} · ${escapeHtml(device.device_name)}</h2>
+                <p class="section-copy">This QR page stays intentionally lean while still exposing the latest useful asset context.</p>
+              </div>
+              <div class="chip-row">
+                ${renderBadge(device.status, "info")}
+                ${renderBadge(device.device_type, "slate")}
+              </div>
+            </div>
+
+            <div class="detail-grid" style="margin-top: 22px;">
+              <div class="info-card">
+                <strong>Device Details</strong>
+                <div class="detail-list" style="margin-top: 14px;">
+                  <p><span class="muted">Type:</span> ${escapeHtml(device.device_type)}</p>
+                  <p><span class="muted">Brand:</span> ${escapeHtml(device.brand ?? "Not available")}</p>
+                  <p><span class="muted">Model:</span> ${escapeHtml(device.model ?? "Not available")}</p>
+                  <p><span class="muted">Serial:</span> ${escapeHtml(device.serial_number ?? "Hidden")}</p>
+                  <p><span class="muted">Specifications:</span> ${escapeHtml(device.specifications ?? "Hidden")}</p>
+                  <p><span class="muted">Origin:</span> ${escapeHtml(device.origin ?? "Not available")}</p>
+                  <p><span class="muted">Supplier:</span> ${escapeHtml(device.supplier ?? "Not available")}</p>
+                  <p><span class="muted">Date Acquired:</span> ${escapeHtml(formatDate(device.date_acquired))}</p>
+                </div>
+              </div>
+
+              <div class="info-card">
+                <strong>Assignment</strong>
+                <div class="detail-list" style="margin-top: 14px;">
+                  <p><span class="muted">Assigned To:</span> ${escapeHtml(device.assigned_to ?? "Hidden or unassigned")}</p>
+                  <p><span class="muted">Department:</span> ${escapeHtml(device.department_name ?? "Hidden or unassigned")}</p>
+                  <p><span class="muted">Branch:</span> ${escapeHtml(device.branch_name ?? "Hidden or unassigned")}</p>
+                  <p><span class="muted">Location:</span> ${escapeHtml(device.location_name ?? "Hidden or unassigned")}</p>
+                  <p><span class="muted">Last Updated:</span> ${escapeHtml(formatDateTime(device.updated_at))}</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="action-row" style="margin-top: 20px;">
+              <a class="button primary" href="${routeHref(`/device/${encodeURIComponent(device.qr_slug)}/edit`)}">Admin Edit</a>
+              <a class="button secondary" href="#repair-form">Request Repair</a>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-pad">
+            <p class="eyebrow">Repair Request</p>
+            <h3 class="panel-title">Report an issue with this device</h3>
+            <p class="section-copy">Optional images are compressed before upload to reduce storage and egress.</p>
+
+            <form id="repair-form" class="form-grid" style="margin-top: 20px;">
+              <input type="hidden" name="qr_slug" value="${escapeHtml(device.qr_slug)}" />
+              <div class="field">
+                <label for="requester_name">Requester Name</label>
+                <input class="input" id="requester_name" name="requester_name" required />
+              </div>
+              <div class="field">
+                <label for="contact_detail">Contact Number or Email</label>
+                <input class="input" id="contact_detail" name="contact_detail" required />
+              </div>
+              <div class="field">
+                <label for="department">Department</label>
+                <input class="input" id="department" name="department" />
+              </div>
+              <div class="field">
+                <label for="priority">Priority</label>
+                <select class="select" id="priority" name="priority">
+                  ${repairPriorities.map((priority) => `<option value="${escapeHtml(priority)}">${escapeHtml(priority)}</option>`).join("")}
+                </select>
+              </div>
+              <div class="field full">
+                <label for="problem_description">Problem Description</label>
+                <textarea class="textarea" id="problem_description" name="problem_description" required></textarea>
+              </div>
+              <div class="field full">
+                <label for="image">Optional Photo</label>
+                <input class="file-input" id="image" name="image" type="file" accept="image/png,image/jpeg,image/webp" />
+                <p class="helper-text">Client-side compression keeps uploads smaller before they reach Supabase Storage.</p>
+              </div>
+              <div class="action-row full">
+                <button class="button primary" type="submit">Request Repair</button>
+              </div>
+            </form>
+          </div>
+        </section>
+      </section>
+
+      ${renderPublicActivityCards(histories, transfers, repairs, device.qr_slug)}
+    </section>
+  `);
+}
+
+async function renderPublicEditPage(slug) {
+  const device = await getDeviceBySlugForAdmin(slug);
+  const lookups = await getLookupData();
+
+  if (!device) {
+    return shell(`
+      <section class="panel">
+        <div class="panel-pad">
+          ${emptyState("Device not found", "This device could not be loaded for QR-based editing.")}
+        </div>
+      </section>
+    `);
+  }
+
+  return shell(renderDeviceForm(device, lookups, absoluteHashUrl(`/device/${device.qr_slug}`)));
+}
+
+async function renderAdminRepairsPage(query) {
+  const page = Number(query.page ?? 1) || 1;
+  const result = await getRepairs({ page, search: query.q, status: query.status });
+  const totalPages = Math.max(1, Math.ceil(result.total / ADMIN_PAGE_SIZE));
+
+  return shell(`
+    <section class="panel">
+      <div class="panel-pad">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Repair Requests</p>
+            <h2 class="section-title">Repair queue</h2>
+            <p class="section-copy">Status filters and pagination keep the repair table small and responsive.</p>
+          </div>
+        </div>
+
+        <div class="filter-row" style="margin-top: 18px;">
+          <div class="field" style="min-width: min(360px, 100%); flex: 1;">
+            <label for="repair-search">Search Repairs</label>
+            <input class="input" id="repair-search" data-search-route="/admin/repairs" data-preserve="status" type="search" value="${escapeHtml(query.q ?? "")}" placeholder="Requester or problem text" />
+          </div>
+          <div class="field" style="min-width: 220px;">
+            <label for="repair-status-filter">Status</label>
+            <select class="select" id="repair-status-filter" data-filter-route="/admin/repairs" data-preserve="q">
+              <option value="">All statuses</option>
+              ${repairStatuses
+                .map(
+                  (status) =>
+                    `<option value="${escapeHtml(status)}" ${query.status === status ? "selected" : ""}>${escapeHtml(status)}</option>`,
+                )
+                .join("")}
+            </select>
+          </div>
+        </div>
+
+        <div class="table-shell" style="margin-top: 20px;">
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Device</th>
+                  <th>Requester</th>
+                  <th>Priority</th>
+                  <th>Status</th>
+                  <th>Requested</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${
+                  result.data.length
+                    ? result.data
+                        .map(
+                          (repair) => `
+                            <tr>
+                              <td><strong>${escapeHtml(repair.devices?.asset_code ?? "")} · ${escapeHtml(repair.devices?.device_name ?? "")}</strong></td>
+                              <td>${escapeHtml(repair.requester_name)}<div class="muted">${escapeHtml(repair.department ?? "No department")}</div></td>
+                              <td>${renderBadge(repair.priority, "amber")}</td>
+                              <td>${renderBadge(repair.status, "rose")}</td>
+                              <td>${escapeHtml(formatDateTime(repair.requested_at))}</td>
+                              <td><a class="tiny-link" href="${routeHref(`/admin/repairs/${encodeURIComponent(repair.id)}`)}">Review</a></td>
+                            </tr>
+                          `,
+                        )
+                        .join("")
+                    : `<tr><td colspan="6">${emptyState("No repair requests", "No repairs matched this filter yet.")}</td></tr>`
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        ${renderPagination("/admin/repairs", query, result.page, totalPages)}
+      </div>
+    </section>
+  `);
+}
+
+async function renderAdminRepairDetailPage(id) {
+  const repair = await getRepairById(id);
+
+  if (!repair) {
+    return shell(`
+      <section class="panel">
+        <div class="panel-pad">
+          ${emptyState("Repair not found", "This repair request could not be loaded.")}
+        </div>
+      </section>
+    `);
+  }
+
+  const imageUrl = repair.image_path ? await getSignedRepairImage(repair.image_path) : null;
+
+  return shell(`
+    <section class="detail-grid">
+      <section class="panel detail-shell">
+        <div class="panel-pad">
+          <p class="eyebrow">Request Snapshot</p>
+          <h2 class="section-title">${escapeHtml(repair.devices?.asset_code ?? "")} · ${escapeHtml(repair.devices?.device_name ?? "")}</h2>
+          <div class="detail-list" style="margin-top: 20px;">
+            <p><span class="muted">Requester:</span> ${escapeHtml(repair.requester_name)}</p>
+            <p><span class="muted">Contact:</span> ${escapeHtml(repair.contact_detail)}</p>
+            <p><span class="muted">Priority:</span> ${escapeHtml(repair.priority)}</p>
+            <p><span class="muted">Status:</span> ${escapeHtml(repair.status)}</p>
+            <p><span class="muted">Requested:</span> ${escapeHtml(formatDateTime(repair.requested_at))}</p>
+            <p><span class="muted">Problem:</span> ${escapeHtml(repair.problem_description)}</p>
+            ${repair.remarks ? `<p><span class="muted">Remarks:</span> ${escapeHtml(repair.remarks)}</p>` : ""}
+          </div>
+          ${
+            imageUrl
+              ? `<div style="margin-top: 20px;"><img src="${escapeHtml(imageUrl)}" alt="Repair attachment" style="width: 100%; border-radius: 20px; border: 1px solid rgba(132,177,255,0.18);" /></div>`
+              : ""
+          }
+          <div class="action-row" style="margin-top: 20px;">
+            <a class="button secondary" href="${routeHref(`/device/${encodeURIComponent(repair.devices?.qr_slug ?? "")}`)}">Open QR Page</a>
+            <a class="button secondary" href="${routeHref("/admin/repairs")}">Back to Repairs</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel form-shell">
+        <div class="panel-pad">
+          <p class="eyebrow">Repair Update</p>
+          <h3 class="panel-title">Move the workflow forward</h3>
+          <form id="repair-update-form" class="form-grid" style="margin-top: 20px;">
+            <input type="hidden" name="repair_id" value="${escapeHtml(repair.id)}" />
+            <div class="field">
+              <label for="repair_status">Repair Status</label>
+              <select class="select" id="repair_status" name="status">
+                ${repairStatuses
+                  .map(
+                    (status) =>
+                      `<option value="${escapeHtml(status)}" ${repair.status === status ? "selected" : ""}>${escapeHtml(status)}</option>`,
+                  )
+                  .join("")}
+              </select>
+            </div>
+            <div class="field">
+              <label for="assigned_technician">Assigned Technician</label>
+              <input class="input" id="assigned_technician" name="assigned_technician" value="${escapeHtml(repair.assigned_technician ?? "")}" />
+            </div>
+            <div class="field full">
+              <label for="device_status">Optional Device Status Update</label>
+              <select class="select" id="device_status" name="device_status">
+                <option value="">Do not change device status</option>
+                ${deviceStatuses.map((status) => `<option value="${escapeHtml(status)}">${escapeHtml(status)}</option>`).join("")}
+              </select>
+            </div>
+            <div class="field full">
+              <label for="repair_remarks">Remarks</label>
+              <textarea class="textarea" id="repair_remarks" name="remarks">${escapeHtml(repair.remarks ?? "")}</textarea>
+            </div>
+            <div class="action-row full">
+              <button class="button primary" type="submit">Update Repair Request</button>
+            </div>
+          </form>
+        </div>
+      </section>
+    </section>
+  `);
+}
+
+async function renderAdminTransfersPage(query) {
+  const page = Number(query.page ?? 1) || 1;
+  const [lookups, selectedDevice, transferResult] = await Promise.all([
+    getLookupData(),
+    query.device ? getDeviceById(query.device) : Promise.resolve(null),
+    getTransfers({ page, search: query.q }),
+  ]);
+  const totalPages = Math.max(1, Math.ceil(transferResult.total / ADMIN_PAGE_SIZE));
+
+  return shell(`
+    <section class="page-grid">
+      <section class="panel form-shell">
+        <div class="panel-pad">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Transfers</p>
+              <h2 class="section-title">Assignment handoff</h2>
+              <p class="section-copy">Start transfers from the device list so this page never needs to load a huge device picker.</p>
+            </div>
+          </div>
+
+          ${
+            selectedDevice
+              ? `
+                <form id="transfer-form" class="form-grid" style="margin-top: 22px;">
+                  <input type="hidden" name="device_id" value="${escapeHtml(selectedDevice.id)}" />
+                  <div class="field full">
+                    <label>Transferring Device</label>
+                    <div class="alert info">${escapeHtml(selectedDevice.asset_code)} · ${escapeHtml(selectedDevice.device_name)}</div>
+                  </div>
+                  <div class="field">
+                    <label for="to_assigned_to">New Assigned User</label>
+                    <input class="input" id="to_assigned_to" name="to_assigned_to" value="${escapeHtml(selectedDevice.assigned_to ?? "")}" />
+                  </div>
+                  <div class="field">
+                    <label for="to_department_id">New Department</label>
+                    <select class="select" id="to_department_id" name="to_department_id">
+                      <option value="">Unassigned</option>
+                      ${lookups.departments
+                        .map(
+                          (department) =>
+                            `<option value="${escapeHtml(department.id)}" ${selectedDevice.department_id === department.id ? "selected" : ""}>${escapeHtml(department.name)}</option>`,
+                        )
+                        .join("")}
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label for="to_branch_id">New Branch</label>
+                    <select class="select" id="to_branch_id" name="to_branch_id">
+                      <option value="">Unassigned</option>
+                      ${lookups.branches
+                        .map(
+                          (branch) =>
+                            `<option value="${escapeHtml(branch.id)}" ${selectedDevice.branch_id === branch.id ? "selected" : ""}>${escapeHtml(branch.name)}</option>`,
+                        )
+                        .join("")}
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label for="to_location_id">New Location</label>
+                    <select class="select" id="to_location_id" name="to_location_id">
+                      <option value="">Unassigned</option>
+                      ${lookups.locations
+                        .map(
+                          (location) =>
+                            `<option value="${escapeHtml(location.id)}" data-branch-id="${escapeHtml(location.branch_id)}" ${selectedDevice.location_id === location.id ? "selected" : ""}>${escapeHtml(location.name)}</option>`,
+                        )
+                        .join("")}
+                    </select>
+                  </div>
+                  <div class="field full">
+                    <label for="reason">Transfer Reason</label>
+                    <input class="input" id="reason" name="reason" required placeholder="Branch move, reassignment, replacement..." />
+                  </div>
+                  <div class="field full">
+                    <label for="remarks">Remarks</label>
+                    <textarea class="textarea" id="remarks" name="remarks"></textarea>
+                  </div>
+                  <div class="action-row full">
+                    <button class="button primary" type="submit">Save Transfer</button>
+                  </div>
+                </form>
+              `
+              : emptyState(
+                  "Choose a device first",
+                  "Use the Transfer link from the device list to open this form with a selected device.",
+                  `<a class="button secondary" href="${routeHref("/admin/devices")}">Open Devices</a>`,
+                )
+          }
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-pad">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Transfer Log</p>
+              <h3 class="panel-title">Recent movement</h3>
+            </div>
+          </div>
+
+          <div class="field" style="margin-top: 18px;">
+            <label for="transfer-search">Search Transfers</label>
+            <input class="input" id="transfer-search" data-search-route="/admin/transfers" data-preserve="device" type="search" value="${escapeHtml(query.q ?? "")}" placeholder="Assignee or reason" />
+          </div>
+
+          <div class="table-shell" style="margin-top: 20px;">
+            <div class="table-scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Device</th>
+                    <th>Movement</th>
+                    <th>Reason</th>
+                    <th>Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${
+                    transferResult.data.length
+                      ? transferResult.data
+                          .map(
+                            (transfer) => `
+                              <tr>
+                                <td>
+                                  <strong>${escapeHtml(transfer.devices?.asset_code ?? "")} · ${escapeHtml(transfer.devices?.device_name ?? "")}</strong>
+                                  <div class="muted">${escapeHtml(transfer.devices?.qr_slug ?? "")}</div>
+                                </td>
+                                <td>
+                                  ${escapeHtml(transfer.from_assigned_to ?? "Unassigned")} → ${escapeHtml(transfer.to_assigned_to ?? "Unassigned")}
+                                  <div class="muted">${escapeHtml(transfer.from_department_name ?? "No department")} / ${escapeHtml(transfer.from_branch_name ?? "No branch")} / ${escapeHtml(transfer.from_location_name ?? "No location")}</div>
+                                  <div class="muted">${escapeHtml(transfer.to_department_name ?? "No department")} / ${escapeHtml(transfer.to_branch_name ?? "No branch")} / ${escapeHtml(transfer.to_location_name ?? "No location")}</div>
+                                </td>
+                                <td>${escapeHtml(transfer.reason ?? "No reason")}</td>
+                                <td>${escapeHtml(formatDateTime(transfer.date_transferred))}</td>
+                              </tr>
+                            `,
+                          )
+                          .join("")
+                      : `<tr><td colspan="4">${emptyState("No transfers yet", "No transfer log entries matched this view.")}</td></tr>`
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          ${renderPagination("/admin/transfers", query, transferResult.page, totalPages)}
+        </div>
+      </section>
+    </section>
+  `);
+}
+
+async function renderAdminHistoryPage(query) {
+  const page = Number(query.page ?? 1) || 1;
+  const result = await getHistory({ page, search: query.q });
+  const totalPages = Math.max(1, Math.ceil(result.total / ADMIN_PAGE_SIZE));
+
+  return shell(`
+    <section class="panel">
+      <div class="panel-pad">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Device History</p>
+            <h2 class="section-title">Audit trail</h2>
+            <p class="section-copy">The history stream is paginated and searchable so it stays useful without dragging down every session.</p>
+          </div>
+        </div>
+
+        <div class="field" style="margin-top: 18px;">
+          <label for="history-search">Search History</label>
+          <input class="input" id="history-search" data-search-route="/admin/history" type="search" value="${escapeHtml(query.q ?? "")}" placeholder="Action type or description" />
+        </div>
+
+        <div class="timeline" style="margin-top: 20px;">
+          ${
+            result.data.length
+              ? result.data
+                  .map(
+                    (history) => `
+                      <div class="timeline-card">
+                        <div class="split">
+                          <div class="chip-row">
+                            ${renderHistoryBadge(history.action_type)}
+                            <a class="tiny-link" href="${routeHref(`/device/${encodeURIComponent(history.devices?.qr_slug ?? "")}`)}">${escapeHtml(history.devices?.asset_code ?? "")} · ${escapeHtml(history.devices?.device_name ?? "")}</a>
+                          </div>
+                          <span class="muted">${escapeHtml(formatDateTime(history.created_at))}</span>
+                        </div>
+                        <p style="margin-top: 12px;">${escapeHtml(history.description)}</p>
+                        ${history.actor_name ? `<p class="timeline-meta">By ${escapeHtml(history.actor_name)}</p>` : ""}
+                      </div>
+                    `,
+                  )
+                  .join("")
+              : emptyState("No history yet", "No audit entries matched this search.")
+          }
+        </div>
+
+        ${renderPagination("/admin/history", query, result.page, totalPages)}
+      </div>
+    </section>
+  `);
+}
+
+async function resolveRoute() {
+  const route = getRoute();
+  const deviceRoute = parseDeviceRoute(route.path);
+  const adminDeviceRoute = parseAdminDeviceRoute(route.path);
+  const adminRepairRoute = parseAdminRepairRoute(route.path);
+
+  if (route.path === "/") {
+    return renderHomePage();
+  }
+
+  if (route.path === "/admin/login") {
+    return renderAdminLoginPage(route.query);
+  }
+
+  if (route.path === "/admin/dashboard") {
+    if (!isAdmin()) {
+      requireAdminRoute(route.path, route.query);
+      return null;
+    }
+    return renderAdminDashboardPage();
+  }
+
+  if (route.path === "/admin/devices") {
+    if (!isAdmin()) {
+      requireAdminRoute(route.path, route.query);
+      return null;
+    }
+    return renderAdminDevicesPage(route.query);
+  }
+
+  if (adminDeviceRoute) {
+    if (!isAdmin()) {
+      requireAdminRoute(route.path, route.query);
+      return null;
+    }
+    return renderAdminDeviceFormPage(adminDeviceRoute.id);
+  }
+
+  if (route.path === "/admin/repairs") {
+    if (!isAdmin()) {
+      requireAdminRoute(route.path, route.query);
+      return null;
+    }
+    return renderAdminRepairsPage(route.query);
+  }
+
+  if (adminRepairRoute) {
+    if (!isAdmin()) {
+      requireAdminRoute(route.path, route.query);
+      return null;
+    }
+    return renderAdminRepairDetailPage(adminRepairRoute.id);
+  }
+
+  if (route.path === "/admin/transfers") {
+    if (!isAdmin()) {
+      requireAdminRoute(route.path, route.query);
+      return null;
+    }
+    return renderAdminTransfersPage(route.query);
+  }
+
+  if (route.path === "/admin/history") {
+    if (!isAdmin()) {
+      requireAdminRoute(route.path, route.query);
+      return null;
+    }
+    return renderAdminHistoryPage(route.query);
+  }
+
+  if (deviceRoute?.kind === "public-device") {
+    return renderPublicDevicePage(deviceRoute.slug);
+  }
+
+  if (deviceRoute?.kind === "public-device-edit") {
+    if (!isAdmin()) {
+      requireAdminRoute(route.path, route.query);
+      return null;
+    }
+    return renderPublicEditPage(deviceRoute.slug);
+  }
+
+  return shell(`
+    <section class="panel">
+      <div class="panel-pad">
+        ${emptyState("Page not found", "The route you requested is not available in this static build.", `<a class="button secondary" href="${routeHref("/")}">Back Home</a>`)}
+      </div>
+    </section>
+  `);
+}
+
+function bindDebouncedSearchInputs() {
+  const inputs = document.querySelectorAll("[data-search-route]");
+
+  inputs.forEach((input) => {
+    let timer = null;
+
+    input.addEventListener("input", () => {
+      window.clearTimeout(timer);
+      timer = window.setTimeout(() => {
+        const { query } = getRoute();
+        const nextQuery = {};
+        const preserve = String(input.getAttribute("data-preserve") || "")
+          .split(",")
+          .map((value) => value.trim())
+          .filter(Boolean);
+
+        preserve.forEach((key) => {
+          if (query[key]) {
+            nextQuery[key] = query[key];
+          }
+        });
+
+        if (input.value.trim()) {
+          nextQuery.q = input.value.trim();
+        }
+
+        nextQuery.page = 1;
+        go(input.getAttribute("data-search-route"), nextQuery);
+      }, 350);
+    });
+  });
+}
+
+function bindFilterSelects() {
+  const selects = document.querySelectorAll("[data-filter-route]");
+
+  selects.forEach((select) => {
+    select.addEventListener("change", () => {
+      const { query } = getRoute();
+      const nextQuery = {};
+      const preserve = String(select.getAttribute("data-preserve") || "")
+        .split(",")
+        .map((value) => value.trim())
+        .filter(Boolean);
+
+      preserve.forEach((key) => {
+        if (query[key]) {
+          nextQuery[key] = query[key];
+        }
+      });
+
+      if (select.value) {
+        nextQuery.status = select.value;
+      }
+
+      nextQuery.page = 1;
+      go(select.getAttribute("data-filter-route"), nextQuery);
+    });
+  });
+}
+
+async function compressImage(file) {
+  const bitmap = await createImageBitmap(file);
+  const maxDimension = 1600;
+  const scale = Math.min(1, maxDimension / Math.max(bitmap.width, bitmap.height));
+  const width = Math.max(1, Math.round(bitmap.width * scale));
+  const height = Math.max(1, Math.round(bitmap.height * scale));
+
+  const canvas = document.createElement("canvas");
+  canvas.width = width;
+  canvas.height = height;
+  const context = canvas.getContext("2d");
+  context.drawImage(bitmap, 0, 0, width, height);
+
+  const blob = await new Promise((resolve, reject) => {
+    canvas.toBlob(
+      (result) => {
+        if (result) {
+          resolve(result);
+        } else {
+          reject(new Error("Unable to compress image."));
+        }
+      },
+      file.type === "image/png" ? "image/png" : "image/jpeg",
+      0.78,
+    );
+  });
+
+  return new File([blob], file.name.replace(/\.\w+$/, "") + (file.type === "image/png" ? ".png" : ".jpg"), {
+    type: blob.type,
+  });
+}
+
+async function handleAdminLoginSubmit(event) {
+  event.preventDefault();
+  const formData = new FormData(event.currentTarget);
+  const submitter = event.currentTarget.querySelector("button[type='submit']");
+  submitter.disabled = true;
+  submitter.textContent = "Signing In...";
+
+  try {
+    await signInAdmin(String(formData.get("email")), String(formData.get("password")));
+    await ensureAuthHydrated();
+
+    if (!isAdmin()) {
+      toast("Signed in, but this user is not an admin profile yet.", "error");
+      submitter.disabled = false;
+      submitter.textContent = "Sign In";
+      return;
+    }
+
+    const nextPath = String(formData.get("next") || state.pendingRoute || "/admin/dashboard");
+    state.pendingRoute = null;
+    go(nextPath.split("?")[0], Object.fromEntries(new URLSearchParams(nextPath.split("?")[1] || "")));
+    toast("Admin session ready.", "success");
+  } catch (error) {
+    toast(error.message || "Unable to sign in.", "error");
+    submitter.disabled = false;
+    submitter.textContent = "Sign In";
+  }
+}
+
+async function handleDeviceFormSubmit(event) {
+  event.preventDefault();
+  const formData = new FormData(event.currentTarget);
+  const payload = {
+    id: toNullable(formData.get("deviceId")),
+    asset_code: String(formData.get("asset_code") || ""),
+    qr_slug: slugify(String(formData.get("qr_slug") || formData.get("asset_code") || "")),
+    device_name: String(formData.get("device_name") || ""),
+    device_type: String(formData.get("device_type") || ""),
+    brand: toNullable(formData.get("brand")),
+    model: toNullable(formData.get("model")),
+    serial_number: toNullable(formData.get("serial_number")),
+    specifications: toNullable(formData.get("specifications")),
+    assigned_to: toNullable(formData.get("assigned_to")),
+    department_id: toNullable(formData.get("department_id")),
+    branch_id: toNullable(formData.get("branch_id")),
+    location_id: toNullable(formData.get("location_id")),
+    origin: toNullable(formData.get("origin")),
+    supplier: toNullable(formData.get("supplier")),
+    date_acquired: toNullable(formData.get("date_acquired")),
+    status: String(formData.get("status") || "Available"),
+    notes: toNullable(formData.get("notes")),
+    show_serial_number_public: boolFromForm(formData, "show_serial_number_public"),
+    show_specifications_public: boolFromForm(formData, "show_specifications_public"),
+    show_assignment_public: boolFromForm(formData, "show_assignment_public"),
+  };
+
+  const button = event.currentTarget.querySelector("button[type='submit']");
+  button.disabled = true;
+  button.textContent = payload.id ? "Saving..." : "Creating...";
+
+  try {
+    const saved = await saveDevice(payload, state.user.id);
+    toast(payload.id ? "Device saved." : "Device created.", "success");
+    go(`/admin/devices/${saved.id}/edit`);
+  } catch (error) {
+    toast(error.message || "Unable to save device.", "error");
+    button.disabled = false;
+    button.textContent = payload.id ? "Save Device" : "Create Device";
+  }
+}
+
+async function handleRepairFormSubmit(event) {
+  event.preventDefault();
+  const formData = new FormData(event.currentTarget);
+  const button = event.currentTarget.querySelector("button[type='submit']");
+  button.disabled = true;
+  button.textContent = "Submitting...";
+
+  try {
+    let imagePath = null;
+    const file = formData.get("image");
+
+    if (file instanceof File && file.size > 0) {
+      const compressed = await compressImage(file);
+      imagePath = await uploadRepairImage(String(formData.get("qr_slug")), compressed);
+    }
+
+    await submitRepairRequest({
+      qr_slug: String(formData.get("qr_slug")),
+      requester_name: String(formData.get("requester_name")),
+      department: toNullable(formData.get("department")),
+      contact_detail: String(formData.get("contact_detail")),
+      problem_description: String(formData.get("problem_description")),
+      priority: String(formData.get("priority") || "Medium"),
+      image_path: imagePath,
+    });
+
+    toast("Repair request submitted.", "success");
+    event.currentTarget.reset();
+    renderRoute();
+  } catch (error) {
+    toast(error.message || "Unable to submit repair request.", "error");
+    button.disabled = false;
+    button.textContent = "Request Repair";
+  }
+}
+
+async function handleRepairUpdateSubmit(event) {
+  event.preventDefault();
+  const formData = new FormData(event.currentTarget);
+  const button = event.currentTarget.querySelector("button[type='submit']");
+  button.disabled = true;
+  button.textContent = "Updating...";
+
+  try {
+    await updateRepairRequest({
+      repair_id: String(formData.get("repair_id")),
+      status: String(formData.get("status")),
+      assigned_technician: toNullable(formData.get("assigned_technician")),
+      remarks: toNullable(formData.get("remarks")),
+      device_status: toNullable(formData.get("device_status")),
+    });
+
+    toast("Repair request updated.", "success");
+    renderRoute();
+  } catch (error) {
+    toast(error.message || "Unable to update repair request.", "error");
+    button.disabled = false;
+    button.textContent = "Update Repair Request";
+  }
+}
+
+async function handleTransferSubmit(event) {
+  event.preventDefault();
+  const formData = new FormData(event.currentTarget);
+  const button = event.currentTarget.querySelector("button[type='submit']");
+  button.disabled = true;
+  button.textContent = "Saving...";
+
+  try {
+    await createTransfer({
+      device_id: String(formData.get("device_id")),
+      to_assigned_to: toNullable(formData.get("to_assigned_to")),
+      to_department_id: toNullable(formData.get("to_department_id")),
+      to_branch_id: toNullable(formData.get("to_branch_id")),
+      to_location_id: toNullable(formData.get("to_location_id")),
+      reason: String(formData.get("reason")),
+      remarks: toNullable(formData.get("remarks")),
+    });
+
+    toast("Transfer saved.", "success");
+    go("/admin/transfers");
+  } catch (error) {
+    toast(error.message || "Unable to save transfer.", "error");
+    button.disabled = false;
+    button.textContent = "Save Transfer";
+  }
+}
+
+function escapeCsv(value) {
+  if (!value) return "";
+  return `"${String(value).replace(/"/g, '""')}"`;
+}
+
+async function handleExportDevices() {
+  try {
+    const { query } = getRoute();
+    const devices = await getDevicesForExport({
+      search: query.q,
+      status: query.status,
+      visibility: query.visibility || "all",
+    });
+
+    const rows = [
+      [
+        "asset_code",
+        "device_name",
+        "device_type",
+        "brand",
+        "model",
+        "serial_number",
+        "assigned_to",
+        "department",
+        "branch",
+        "location",
+        "status",
+        "record_state",
+        "qr_slug",
+        "created_at",
+        "updated_at",
+      ].join(","),
+      ...devices.map((device) =>
+        [
+          escapeCsv(device.asset_code),
+          escapeCsv(device.device_name),
+          escapeCsv(device.device_type),
+          escapeCsv(device.brand),
+          escapeCsv(device.model),
+          escapeCsv(device.serial_number),
+          escapeCsv(device.assigned_to),
+          escapeCsv(device.departments?.name),
+          escapeCsv(device.branches?.name),
+          escapeCsv(device.locations?.name),
+          escapeCsv(device.status),
+          escapeCsv(device.is_active ? "Active" : "Archived"),
+          escapeCsv(device.qr_slug),
+          escapeCsv(device.created_at),
+          escapeCsv(device.updated_at),
+        ].join(","),
+      ),
+    ];
+
+    const blob = new Blob([rows.join("\n")], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = "devices-export.csv";
+    anchor.click();
+    URL.revokeObjectURL(url);
+    toast("CSV generated.", "success");
+  } catch (error) {
+    toast(error.message || "Unable to devices.", "error");
+  }
+}
+
+async function appendPublicItems(type, slug, offset) {
+  const containerId = type === "history" ? "history-list" : type === "transfers" ? "transfer-list" : "repair-list";
+  const container = document.getElementById(containerId);
+  if (!container) return;
+
+  try {
+    const items =
+      type === "history"
+        ? await getPublicDeviceHistories(slug, DEVICE_HISTORY_BATCH, offset)
+        : type === "transfers"
+          ? await getPublicTransferHistories(slug, DEVICE_HISTORY_BATCH, offset)
+          : await getPublicRepairHistories(slug, DEVICE_HISTORY_BATCH, offset);
+
+    if (!items.length) {
+      toast(`No more ${type} to load.`, "info");
+      return;
+    }
+
+    const html = items
+      .map((item) => {
+        if (type === "history") {
+          return `
+            <div class="timeline-card">
+              <div class="split">
+                ${renderHistoryBadge(item.action_type)}
+                <span class="muted">${escapeHtml(formatDateTime(item.created_at))}</span>
+              </div>
+              <p style="margin-top: 12px;">${escapeHtml(item.description)}</p>
+              ${item.actor_name ? `<p class="timeline-meta">By ${escapeHtml(item.actor_name)}</p>` : ""}
+            </div>
+          `;
+        }
+
+        if (type === "transfers") {
+          return `
+            <div class="timeline-card">
+              <div class="split">
+                <strong>${escapeHtml(item.from_assigned_to ?? "Unassigned")} → ${escapeHtml(item.to_assigned_to ?? "Unassigned")}</strong>
+                <span class="muted">${escapeHtml(formatDateTime(item.date_transferred))}</span>
+              </div>
+              <p class="timeline-meta">${escapeHtml(item.reason ?? "No reason")}</p>
+            </div>
+          `;
+        }
+
+        return `
+          <div class="timeline-card">
+            <div class="split">
+              <div class="chip-row">
+                ${renderBadge(item.status, "rose")}
+                ${renderBadge(item.priority, "amber")}
+              </div>
+              <span class="muted">${escapeHtml(formatDateTime(item.requested_at))}</span>
+            </div>
+            <p style="margin-top: 12px;">${escapeHtml(item.problem_description)}</p>
+          </div>
+        `;
+      })
+      .join("");
+
+    container.insertAdjacentHTML("beforeend", html);
+
+    const button = document.querySelector(`[data-action="load-${type}"]`);
+    if (button) {
+      button.setAttribute("data-offset", String(offset + items.length));
+    }
+  } catch (error) {
+    toast(error.message || `Unable to load more ${type}.`, "error");
+  }
+}
+
+async function handleAction(event) {
+  const target = event.target.closest("[data-action]");
+  if (!target) return;
+
+  const action = target.getAttribute("data-action");
+
+  if (action === "sign-out") {
+    try {
+      await signOutAdmin();
+      state.pendingRoute = null;
+      toast("Signed out.", "success");
+      go("/");
+    } catch (error) {
+      toast(error.message || "Unable to sign out.", "error");
+    }
+    return;
+  }
+
+  if (action === "archive-device") {
+    try {
+      await archiveDevice(target.getAttribute("data-device-id"), state.user.id);
+      toast("Device archived.", "success");
+      renderRoute();
+    } catch (error) {
+      toast(error.message || "Unable to archive device.", "error");
+    }
+    return;
+  }
+
+  if (action === "restore-device") {
+    try {
+      await restoreDevice(target.getAttribute("data-device-id"), state.user.id);
+      toast("Device restored.", "success");
+      renderRoute();
+    } catch (error) {
+      toast(error.message || "Unable to restore device.", "error");
+    }
+    return;
+  }
+
+  if (action === "export-devices") {
+    await handleExportDevices();
+    return;
+  }
+
+  if (action === "print-qr") {
+    window.print();
+    return;
+  }
+
+  if (action === "load-history") {
+    await appendPublicItems("history", target.getAttribute("data-slug"), Number(target.getAttribute("data-offset") || 0));
+    return;
+  }
+
+  if (action === "load-transfers") {
+    await appendPublicItems("transfers", target.getAttribute("data-slug"), Number(target.getAttribute("data-offset") || 0));
+    return;
+  }
+
+  if (action === "load-repairs") {
+    await appendPublicItems("repairs", target.getAttribute("data-slug"), Number(target.getAttribute("data-offset") || 0));
+  }
+}
+
+function syncLocationOptions(branchSelect, locationSelect) {
+  if (!branchSelect || !locationSelect) return;
+
+  const selectedBranch = branchSelect.value;
+  const currentValue = locationSelect.value;
+  let stillValid = currentValue === "";
+
+  Array.from(locationSelect.options).forEach((option, index) => {
+    if (index === 0) {
+      option.hidden = false;
+      return;
+    }
+
+    const branchId = option.getAttribute("data-branch-id");
+    const visible = !selectedBranch || branchId === selectedBranch;
+    option.hidden = !visible;
+
+    if (!visible && option.selected) {
+      option.selected = false;
+    }
+
+    if (visible && option.value === currentValue) {
+      stillValid = true;
+    }
+  });
+
+  if (!stillValid) {
+    locationSelect.value = "";
+  }
+}
+
+async function bindRouteForms() {
+  document.querySelector("#admin-login-form")?.addEventListener("submit", handleAdminLoginSubmit);
+  document.querySelector("#device-form")?.addEventListener("submit", handleDeviceFormSubmit);
+  document.querySelector("#repair-form")?.addEventListener("submit", handleRepairFormSubmit);
+  document.querySelector("#repair-update-form")?.addEventListener("submit", handleRepairUpdateSubmit);
+  document.querySelector("#transfer-form")?.addEventListener("submit", handleTransferSubmit);
+
+  const branchSelect = document.querySelector("#branch_id");
+  const locationSelect = document.querySelector("#location_id");
+  if (branchSelect && locationSelect) {
+    syncLocationOptions(branchSelect, locationSelect);
+    branchSelect.addEventListener("change", () => syncLocationOptions(branchSelect, locationSelect));
+  }
+
+  const transferBranchSelect = document.querySelector("#to_branch_id");
+  const transferLocationSelect = document.querySelector("#to_location_id");
+  if (transferBranchSelect && transferLocationSelect) {
+    syncLocationOptions(transferBranchSelect, transferLocationSelect);
+    transferBranchSelect.addEventListener("change", () =>
+      syncLocationOptions(transferBranchSelect, transferLocationSelect),
+    );
+  }
+}
+
+async function renderQrCanvas() {
+  const canvas = document.getElementById("device-qr-canvas");
+  if (!canvas) return;
+
+  const route = getRoute();
+  let slug = "";
+
+  if (route.path.startsWith("/device/") && route.path.endsWith("/edit")) {
+    slug = decodeURIComponent(route.path.split("/")[2]);
+  } else if (route.path.startsWith("/admin/devices/")) {
+    const form = document.getElementById("device-form");
+    slug = slugify(form?.querySelector("[name='qr_slug']")?.value || form?.querySelector("[name='asset_code']")?.value || "");
+  }
+
+  if (!slug) return;
+
+  const url = absoluteHashUrl(`/device/${slug}`);
+  await QRCode.toCanvas(canvas, url, {
+    width: 220,
+    margin: 1,
+    color: {
+      dark: "#0b1628",
+      light: "#ffffff",
+    },
+  });
+}
+
+async function renderRoute() {
+  const token = ++state.renderToken;
+  app.innerHTML = loadingShell("Loading workspace...");
+
+  try {
+    const html = await resolveRoute();
+    if (!html || token !== state.renderToken) {
+      return;
+    }
+
+    app.innerHTML = html;
+    bindDebouncedSearchInputs();
+    bindFilterSelects();
+    await bindRouteForms();
+    await renderQrCanvas();
+    renderToasts();
+  } catch (error) {
+    if (token !== state.renderToken) {
+      return;
+    }
+
+    app.innerHTML = shell(`
+      <section class="panel">
+        <div class="panel-pad">
+          <div class="alert error">${escapeHtml(error.message || "Something went wrong while loading this route.")}</div>
+          <div class="action-row" style="margin-top: 18px;">
+            <a class="button secondary" href="${routeHref("/")}">Back Home</a>
+          </div>
+        </div>
+      </section>
+    `);
+    renderToasts();
+  }
+}
+
+async function init() {
+  normalizeRedirectedRoute();
+  await ensureAuthHydrated();
+
+  subscribeToAuthChanges(async (session) => {
+    state.session = session;
+    state.user = session?.user ?? null;
+    state.profile = state.user ? await getCurrentProfile(state.user.id) : null;
+    renderRoute();
+  });
+
+  window.addEventListener("hashchange", () => renderRoute());
+  document.addEventListener("click", handleAction);
+
+  renderRoute();
+}
+
+init();
+
+    </script>
+  </body>
+</html>
