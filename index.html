@@ -6,7 +6,7 @@
     <title>IT Inventory Management System</title>
     <meta
       name="description"
-      content="Static GitHub Pages IT inventory system backed by Supabase with QR device pages, repair requests, transfer tracking, and admin workflows."
+      content="Static GitHub Pages IT Inventory Management System backed by Supabase with device management, asset tracking, repair management, transfer management, master data, and QR device pages."
     />
     <style>
 :root {
@@ -377,6 +377,18 @@ code {
   background: linear-gradient(180deg, #10b981, #059669);
   color: white;
   box-shadow: 0 12px 20px rgba(5, 150, 105, 0.16);
+}
+
+.ghost-button.danger {
+  border-color: #fecaca;
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+.ghost-button.success {
+  border-color: #bbf7d0;
+  background: #ecfdf5;
+  color: #047857;
 }
 
 .button[disabled],
@@ -856,6 +868,343 @@ tbody tr:hover {
   color: var(--text-strong);
 }
 
+.dashboard-grid,
+.dashboard-bottom,
+.dashboard-middle,
+.master-grid,
+.utility-grid {
+  display: grid;
+  gap: 20px;
+}
+
+.dashboard-kpis {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.dashboard-middle {
+  grid-template-columns: minmax(0, 1.4fr) minmax(320px, 0.75fr);
+}
+
+.dashboard-bottom {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.master-grid {
+  grid-template-columns: minmax(320px, 0.88fr) minmax(0, 1.12fr);
+}
+
+.utility-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.kpi-card {
+  display: grid;
+  gap: 12px;
+  min-height: 168px;
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(244, 248, 255, 0.96)),
+    radial-gradient(circle at top right, rgba(37, 99, 235, 0.08), transparent 30%);
+  box-shadow: var(--shadow-soft);
+}
+
+.kpi-label {
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted-strong);
+}
+
+.kpi-value {
+  font-size: clamp(2rem, 3vw, 2.8rem);
+  font-weight: 800;
+  letter-spacing: -0.05em;
+  color: var(--text-strong);
+}
+
+.kpi-caption {
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.section-block {
+  display: grid;
+  gap: 18px;
+}
+
+.section-block + .section-block {
+  margin-top: 18px;
+}
+
+.section-subtitle {
+  margin: 6px 0 0;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.toolbar-grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.filter-shell {
+  display: grid;
+  gap: 12px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--panel-muted);
+}
+
+.table-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.table-action {
+  min-height: 34px;
+  padding: 0 12px;
+  border-radius: 12px;
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
+.summary-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.summary-table td,
+.summary-table th {
+  padding: 12px 0;
+  border-top: 1px solid #e6edf6;
+}
+
+.summary-table tr:first-child td,
+.summary-table tr:first-child th {
+  border-top: 0;
+}
+
+.summary-table th {
+  text-align: left;
+  color: var(--muted-strong);
+  font-size: 0.88rem;
+  font-weight: 700;
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+.summary-table td:last-child,
+.summary-table th:last-child {
+  text-align: right;
+}
+
+.metric-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.metric-table th,
+.metric-table td {
+  padding: 12px 14px;
+  border-top: 1px solid #e6edf6;
+}
+
+.metric-table tr:first-child th,
+.metric-table tr:first-child td {
+  border-top: 0;
+}
+
+.metric-table th {
+  background: #f7faff;
+  color: var(--muted-strong);
+  font-size: 0.78rem;
+}
+
+.bar-chart {
+  display: grid;
+  gap: 14px;
+}
+
+.bar-row {
+  display: grid;
+  gap: 8px;
+}
+
+.bar-row-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 0.94rem;
+  color: var(--muted-strong);
+}
+
+.bar-track {
+  overflow: hidden;
+  height: 12px;
+  border-radius: 999px;
+  background: #e9f0f8;
+}
+
+.bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #2563eb, #38bdf8);
+}
+
+.pie-layout {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: minmax(180px, 220px) minmax(0, 1fr);
+  align-items: center;
+}
+
+.pie-visual {
+  width: min(220px, 100%);
+  aspect-ratio: 1;
+  margin: 0 auto;
+  border-radius: 999px;
+  position: relative;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.75), var(--shadow-soft);
+}
+
+.pie-visual::after {
+  content: "";
+  position: absolute;
+  inset: 24%;
+  border-radius: 999px;
+  background: white;
+  box-shadow: inset 0 0 0 1px #e4edf8;
+}
+
+.pie-total {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  z-index: 1;
+  text-align: center;
+}
+
+.pie-total strong {
+  display: block;
+  font-size: 1.7rem;
+  letter-spacing: -0.04em;
+  color: var(--text-strong);
+}
+
+.pie-total span {
+  display: block;
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.pie-legend {
+  display: grid;
+  gap: 10px;
+}
+
+.pie-legend-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: white;
+}
+
+.pie-legend-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--muted-strong);
+  font-weight: 600;
+}
+
+.legend-swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+}
+
+.dashboard-table td:first-child strong,
+.summary-table td:first-child strong {
+  color: var(--text-strong);
+}
+
+.master-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.master-tabs a {
+  display: inline-flex;
+  min-height: 40px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 14px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: white;
+  color: var(--muted-strong);
+  font-weight: 700;
+  box-shadow: var(--shadow-soft);
+}
+
+.master-tabs a.active {
+  border-color: #bfdbfe;
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.master-form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.dependency-note {
+  color: var(--muted);
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+
+.record-meta {
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.table-card-title {
+  display: block;
+  color: var(--text-strong);
+}
+
+.pill-count {
+  display: inline-flex;
+  min-width: 28px;
+  min-height: 28px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-weight: 800;
+}
+
 @keyframes spin {
   from {
     transform: rotate(0deg);
@@ -869,7 +1218,11 @@ tbody tr:hover {
 @media (max-width: 1100px) {
   .hero,
   .device-grid,
-  .detail-grid {
+  .detail-grid,
+  .dashboard-middle,
+  .master-grid,
+  .utility-grid,
+  .dashboard-bottom {
     grid-template-columns: 1fr;
   }
 }
@@ -877,7 +1230,9 @@ tbody tr:hover {
 @media (max-width: 900px) {
   .stats-grid,
   .form-grid,
-  .checkbox-grid {
+  .checkbox-grid,
+  .dashboard-kpis,
+  .toolbar-grid {
     grid-template-columns: 1fr;
   }
 
@@ -903,6 +1258,10 @@ tbody tr:hover {
   .ghost-button {
     width: 100%;
     justify-content: center;
+  }
+
+  .pie-layout {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -945,9 +1304,11 @@ const APP_TITLE = "IT Inventory Management System";
 const ADMIN_PAGE_SIZE = 10;
 const DEVICE_HISTORY_BATCH = 5;
 const EXPORT_LIMIT = 1000;
-const LOOKUP_CACHE_KEY = "itims.lookup-cache.v1";
+const LOOKUP_CACHE_KEY = "itims.lookup-cache.v2";
 const LOOKUP_CACHE_TTL_MS = 60 * 60 * 1000;
 const RESERVED_ROOTS = new Set(["admin", "device", "assets"]);
+const LEGACY_DEVICE_TYPES = ["Desktop", "Laptop", "Printer", "Router", "Switch", "Monitor", "UPS", "Other"];
+const DASHBOARD_COLORS = ["#2563eb", "#0ea5e9", "#14b8a6", "#f59e0b", "#ef4444", "#8b5cf6", "#ec4899", "#64748b"];
 
 function detectBasePath(pathname = window.location.pathname) {
   const segments = pathname.split("/").filter(Boolean);
@@ -1004,7 +1365,11 @@ function normalizeVisibility(visibility) {
   return "all";
 }
 
-function applyDeviceFilters(query, { search, status, visibility }) {
+function invalidateLookupCache() {
+  window.sessionStorage.removeItem(LOOKUP_CACHE_KEY);
+}
+
+function applyDeviceFilters(query, { search, status, visibility, deviceType, branchId, departmentId, locationId }) {
   const nextVisibility = normalizeVisibility(visibility);
   let nextQuery = query;
 
@@ -1023,6 +1388,22 @@ function applyDeviceFilters(query, { search, status, visibility }) {
 
   if (status) {
     nextQuery = nextQuery.eq("status", status);
+  }
+
+  if (deviceType) {
+    nextQuery = nextQuery.eq("device_type", deviceType);
+  }
+
+  if (branchId) {
+    nextQuery = nextQuery.eq("branch_id", branchId);
+  }
+
+  if (departmentId) {
+    nextQuery = nextQuery.eq("department_id", departmentId);
+  }
+
+  if (locationId) {
+    nextQuery = nextQuery.eq("location_id", locationId);
   }
 
   return nextQuery;
@@ -1077,6 +1458,27 @@ async function getCurrentProfile(userId) {
   return data;
 }
 
+async function fetchLookupTable(tableName, primaryColumns, fallbackColumns) {
+  const primary = await supabase.from(tableName).select(primaryColumns).order("name");
+  if (!primary.error) {
+    return { data: primary.data ?? [], legacy: false };
+  }
+
+  if (!fallbackColumns) {
+    throw primary.error;
+  }
+
+  const fallback = await supabase.from(tableName).select(fallbackColumns).order("name");
+  if (fallback.error) {
+    throw primary.error;
+  }
+
+  return {
+    legacy: true,
+    data: (fallback.data ?? []).map((item) => ({ ...item, is_active: true })),
+  };
+}
+
 async function getLookupData(forceRefresh = false) {
   if (!forceRefresh) {
     const cached = window.sessionStorage.getItem(LOOKUP_CACHE_KEY);
@@ -1094,22 +1496,34 @@ async function getLookupData(forceRefresh = false) {
     }
   }
 
-  const [departmentsResult, branchesResult, locationsResult] = await Promise.all([
-    supabase.from("departments").select("id, name, code").order("name"),
-    supabase.from("branches").select("id, name, code").order("name"),
-    supabase.from("locations").select("id, name, code, branch_id, floor_label").order("name"),
+  const [deviceTypesResult, departmentsResult, branchesResult, locationsResult] = await Promise.all([
+    supabase.from("device_types").select("id, name, code, description, is_active").order("name"),
+    fetchLookupTable("departments", "id, name, code, is_active", "id, name, code"),
+    fetchLookupTable("branches", "id, name, code, is_active", "id, name, code"),
+    fetchLookupTable("locations", "id, name, code, branch_id, floor_label, is_active", "id, name, code, branch_id, floor_label"),
   ]);
 
-  for (const result of [departmentsResult, branchesResult, locationsResult]) {
-    if (result.error) {
-      throw result.error;
-    }
-  }
+  const deviceTypesManaged = !deviceTypesResult.error;
+  const deviceTypes = deviceTypesManaged
+    ? deviceTypesResult.data ?? []
+    : LEGACY_DEVICE_TYPES.map((name) => ({
+        id: name,
+        code: name.toUpperCase().replace(/[^A-Z0-9]+/g, "_"),
+        name,
+        description: null,
+        is_active: true,
+      }));
 
   const value = {
+    deviceTypes,
     departments: departmentsResult.data ?? [],
     branches: branchesResult.data ?? [],
     locations: locationsResult.data ?? [],
+    meta: {
+      deviceTypesManaged,
+      masterDataReady:
+        deviceTypesManaged && !departmentsResult.legacy && !branchesResult.legacy && !locationsResult.legacy,
+    },
   };
 
   window.sessionStorage.setItem(
@@ -1120,44 +1534,182 @@ async function getLookupData(forceRefresh = false) {
   return value;
 }
 
-async function getDashboardCounts() {
-  const now = new Date();
-  const monthStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1)).toISOString();
-
-  const [devices, pendingRepairs, activeRepairs, transfers] = await Promise.all([
-    supabase.from("devices").select("id", { head: true, count: "exact" }).eq("is_active", true),
-    supabase.from("repair_requests").select("id", { head: true, count: "exact" }).eq("status", "Pending"),
-    supabase.from("repair_requests").select("id", { head: true, count: "exact" }).in("status", ["Approved", "In Progress"]),
-    supabase.from("transfer_histories").select("id", { head: true, count: "exact" }).gte("date_transferred", monthStart),
-  ]);
-
-  for (const result of [devices, pendingRepairs, activeRepairs, transfers]) {
-    if (result.error) {
-      throw result.error;
-    }
-  }
-
-  return {
-    totalDevices: devices.count ?? 0,
-    pendingRepairs: pendingRepairs.count ?? 0,
-    activeRepairs: activeRepairs.count ?? 0,
-    transfersThisMonth: transfers.count ?? 0,
-  };
-}
-
 async function getRecentDevices() {
   const { data, error } = await supabase
     .from("devices")
-    .select("id, asset_code, device_name, status, qr_slug, updated_at")
+    .select("id, asset_code, device_name, device_type, assigned_to, status, qr_slug, date_acquired, updated_at")
     .eq("is_active", true)
     .order("updated_at", { ascending: false })
-    .limit(5);
+    .limit(8);
 
   if (error) {
     throw error;
   }
 
   return data ?? [];
+}
+
+function normalizeSummaryRows(rows = []) {
+  return [...rows].sort((a, b) => Number(b.total ?? 0) - Number(a.total ?? 0) || String(a.label).localeCompare(String(b.label)));
+}
+
+function buildMonthBuckets(monthCount = 6) {
+  const buckets = [];
+  const today = new Date();
+  const currentMonth = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), 1));
+
+  for (let offset = monthCount - 1; offset >= 0; offset -= 1) {
+    const month = new Date(Date.UTC(currentMonth.getUTCFullYear(), currentMonth.getUTCMonth() - offset, 1));
+    const key = month.toISOString().slice(0, 10);
+    buckets.push({
+      month_key: key,
+      month_label: new Intl.DateTimeFormat("en-US", { month: "short", year: "numeric", timeZone: "UTC" }).format(month),
+      devices_added: 0,
+      repairs_logged: 0,
+      transfers_logged: 0,
+    });
+  }
+
+  return buckets;
+}
+
+function addToMonthBucket(buckets, value, field) {
+  if (!value) return;
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return;
+
+  const monthKey = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), 1)).toISOString().slice(0, 10);
+  const bucket = buckets.find((item) => item.month_key === monthKey);
+  if (bucket) {
+    bucket[field] += 1;
+  }
+}
+
+function buildSummaryCounts(items, getLabel) {
+  const counts = new Map();
+
+  items.forEach((item) => {
+    const label = getLabel(item);
+    counts.set(label, (counts.get(label) || 0) + 1);
+  });
+
+  return normalizeSummaryRows(
+    Array.from(counts.entries()).map(([label, total]) => ({
+      label,
+      total,
+    })),
+  );
+}
+
+async function getDashboardKpisFallback() {
+  const { data, error } = await supabase
+    .from("devices")
+    .select("status, assigned_to")
+    .eq("is_active", true);
+
+  if (error) {
+    throw error;
+  }
+
+  const devices = data ?? [];
+
+  return {
+    total_devices: devices.length,
+    devices_in_use: devices.filter((item) => item.status === "Assigned").length,
+    devices_in_repair: devices.filter((item) => item.status === "In Repair").length,
+    unassigned_devices: devices.filter((item) => !String(item.assigned_to ?? "").trim()).length,
+  };
+}
+
+async function getDashboardKpis() {
+  const rpc = await supabase.rpc("admin_dashboard_kpis");
+  if (!rpc.error && Array.isArray(rpc.data) && rpc.data.length) {
+    return rpc.data[0];
+  }
+
+  return getDashboardKpisFallback();
+}
+
+async function getDashboardBranchSummary() {
+  const rpc = await supabase.rpc("admin_dashboard_branch_summary", { p_limit: 6 });
+  if (!rpc.error && Array.isArray(rpc.data)) {
+    return normalizeSummaryRows(rpc.data);
+  }
+
+  const { data, error } = await supabase
+    .from("devices")
+    .select("branch_id, branches(name)")
+    .eq("is_active", true);
+
+  if (error) {
+    throw error;
+  }
+
+  return buildSummaryCounts(data ?? [], (item) => item.branches?.name ?? "Unassigned");
+}
+
+async function getDashboardDeviceTypeSummary() {
+  const rpc = await supabase.rpc("admin_dashboard_device_type_summary", { p_limit: 8 });
+  if (!rpc.error && Array.isArray(rpc.data)) {
+    return normalizeSummaryRows(rpc.data);
+  }
+
+  const { data, error } = await supabase
+    .from("devices")
+    .select("device_type")
+    .eq("is_active", true);
+
+  if (error) {
+    throw error;
+  }
+
+  return buildSummaryCounts(data ?? [], (item) => item.device_type || "Unassigned");
+}
+
+async function getDashboardStatusSummary() {
+  const rpc = await supabase.rpc("admin_dashboard_status_summary");
+  if (!rpc.error && Array.isArray(rpc.data)) {
+    return normalizeSummaryRows(rpc.data);
+  }
+
+  const { data, error } = await supabase
+    .from("devices")
+    .select("status")
+    .eq("is_active", true);
+
+  if (error) {
+    throw error;
+  }
+
+  return buildSummaryCounts(data ?? [], (item) => item.status || "Unassigned");
+}
+
+async function getDashboardMonthlySummary(monthCount = 6) {
+  const rpc = await supabase.rpc("admin_dashboard_monthly_summary", { p_months: monthCount });
+  if (!rpc.error && Array.isArray(rpc.data) && rpc.data.length) {
+    return rpc.data;
+  }
+
+  const buckets = buildMonthBuckets(monthCount);
+  const oldestMonth = buckets[0]?.month_key;
+
+  const [devices, repairs, transfers] = await Promise.all([
+    supabase.from("devices").select("created_at").gte("created_at", oldestMonth),
+    supabase.from("repair_requests").select("requested_at").gte("requested_at", oldestMonth),
+    supabase.from("transfer_histories").select("date_transferred").gte("date_transferred", oldestMonth),
+  ]);
+
+  for (const result of [devices, repairs, transfers]) {
+    if (result.error) {
+      throw result.error;
+    }
+  }
+
+  (devices.data ?? []).forEach((item) => addToMonthBucket(buckets, item.created_at, "devices_added"));
+  (repairs.data ?? []).forEach((item) => addToMonthBucket(buckets, item.requested_at, "repairs_logged"));
+  (transfers.data ?? []).forEach((item) => addToMonthBucket(buckets, item.date_transferred, "transfers_logged"));
+
+  return [...buckets].reverse();
 }
 
 async function getDevices(options = {}) {
@@ -1168,7 +1720,7 @@ async function getDevices(options = {}) {
   let query = supabase
     .from("devices")
     .select(
-      "id, asset_code, device_name, device_type, status, assigned_to, qr_slug, updated_at, is_active, departments(name), branches(name), locations(name)",
+      "id, asset_code, device_name, device_type, status, assigned_to, qr_slug, date_acquired, updated_at, is_active, department_id, branch_id, location_id, departments(name), branches(name), locations(name)",
       { count: "exact" },
     );
 
@@ -1194,7 +1746,7 @@ async function getDevicesForExport(options = {}) {
   let query = supabase
     .from("devices")
     .select(
-      "asset_code, device_name, device_type, brand, model, serial_number, assigned_to, status, qr_slug, is_active, created_at, updated_at, departments(name), branches(name), locations(name)",
+      "asset_code, device_name, device_type, brand, model, serial_number, assigned_to, status, qr_slug, is_active, created_at, updated_at, department_id, branch_id, location_id, departments(name), branches(name), locations(name)",
     );
 
   query = applyDeviceFilters(query, options)
@@ -1319,6 +1871,218 @@ async function restoreDevice(deviceId, userId) {
 
   if (error) {
     throw error;
+  }
+}
+
+function masterDataError(error) {
+  if (!error) {
+    return new Error("Master data is not ready.");
+  }
+
+  const message = `${error.message || ""} ${error.details || ""}`.toLowerCase();
+  if (
+    error.code === "42P01" ||
+    error.code === "42703" ||
+    error.code === "PGRST204" ||
+    message.includes("device_types") ||
+    message.includes("is_active")
+  ) {
+    return new Error(
+      "Run the latest Supabase migration in supabase/migrations/20260421_master_data_management.sql to enable Master Data management.",
+    );
+  }
+
+  return error;
+}
+
+async function getMasterDataRecords(entity, options = {}) {
+  const config = getMasterEntityConfig(entity);
+  const page = Math.max(1, Number(options.page ?? 1) || 1);
+  const from = (page - 1) * ADMIN_PAGE_SIZE;
+  const to = from + ADMIN_PAGE_SIZE - 1;
+  const visibility = normalizeVisibility(options.visibility);
+  const keyword = options.search ? escapeLikeValue(options.search.trim()) : null;
+
+  let query = supabase.from(config.table).select(config.select, { count: "exact" });
+
+  if (visibility === "active") {
+    query = query.eq("is_active", true);
+  } else if (visibility === "archived") {
+    query = query.eq("is_active", false);
+  }
+
+  if (keyword && config.searchColumns.length) {
+    query = query.or(
+      config.searchColumns.map((column) => `${column}.ilike.%${keyword}%`).join(","),
+    );
+  }
+
+  const { data, count, error } = await query
+    .order(config.orderBy || "name", { ascending: true })
+    .range(from, to);
+
+  if (error) {
+    throw masterDataError(error);
+  }
+
+  return {
+    data: data ?? [],
+    total: count ?? 0,
+    page,
+  };
+}
+
+async function getMasterRecord(entity, recordId) {
+  const config = getMasterEntityConfig(entity);
+  const { data, error } = await supabase
+    .from(config.table)
+    .select(config.select)
+    .eq("id", recordId)
+    .maybeSingle();
+
+  if (error) {
+    throw masterDataError(error);
+  }
+
+  return data;
+}
+
+async function saveMasterRecord(entity, payload) {
+  const config = getMasterEntityConfig(entity);
+  const normalizedPayload = config.normalizePayload(payload);
+
+  if (payload.id) {
+    const { data, error } = await supabase
+      .from(config.table)
+      .update(normalizedPayload)
+      .eq("id", payload.id)
+      .select(config.select)
+      .single();
+
+    if (error) {
+      throw masterDataError(error);
+    }
+
+    invalidateLookupCache();
+    return data;
+  }
+
+  const { data, error } = await supabase
+    .from(config.table)
+    .insert(normalizedPayload)
+    .select(config.select)
+    .single();
+
+  if (error) {
+    throw masterDataError(error);
+  }
+
+  invalidateLookupCache();
+  return data;
+}
+
+async function setMasterRecordActive(entity, recordId, isActive) {
+  const config = getMasterEntityConfig(entity);
+  const { error } = await supabase
+    .from(config.table)
+    .update({ is_active: isActive })
+    .eq("id", recordId);
+
+  if (error) {
+    throw masterDataError(error);
+  }
+
+  invalidateLookupCache();
+}
+
+async function deleteMasterRecord(entity, recordId) {
+  const config = getMasterEntityConfig(entity);
+  const { error } = await supabase
+    .from(config.table)
+    .delete()
+    .eq("id", recordId);
+
+  if (error) {
+    throw masterDataError(error);
+  }
+
+  invalidateLookupCache();
+}
+
+async function getMasterRecordUsage(entity, record) {
+  try {
+    if (entity === "device-types") {
+      const devices = await supabase
+        .from("devices")
+        .select("id", { head: true, count: "exact" })
+        .eq("device_type", record.name);
+
+      if (devices.error) throw devices.error;
+
+      return {
+        total: devices.count ?? 0,
+        entries: [{ label: "Device records", total: devices.count ?? 0 }],
+      };
+    }
+
+    if (entity === "branches") {
+      const [locations, devices, transferFrom, transferTo] = await Promise.all([
+        supabase.from("locations").select("id", { head: true, count: "exact" }).eq("branch_id", record.id),
+        supabase.from("devices").select("id", { head: true, count: "exact" }).eq("branch_id", record.id),
+        supabase.from("transfer_histories").select("id", { head: true, count: "exact" }).eq("from_branch_id", record.id),
+        supabase.from("transfer_histories").select("id", { head: true, count: "exact" }).eq("to_branch_id", record.id),
+      ]);
+
+      for (const result of [locations, devices, transferFrom, transferTo]) {
+        if (result.error) throw result.error;
+      }
+
+      const entries = [
+        { label: "Locations", total: locations.count ?? 0 },
+        { label: "Device records", total: devices.count ?? 0 },
+        { label: "Transfer records", total: (transferFrom.count ?? 0) + (transferTo.count ?? 0) },
+      ];
+
+      return { total: entries.reduce((sum, entry) => sum + entry.total, 0), entries };
+    }
+
+    if (entity === "departments") {
+      const [devices, transferFrom, transferTo] = await Promise.all([
+        supabase.from("devices").select("id", { head: true, count: "exact" }).eq("department_id", record.id),
+        supabase.from("transfer_histories").select("id", { head: true, count: "exact" }).eq("from_department_id", record.id),
+        supabase.from("transfer_histories").select("id", { head: true, count: "exact" }).eq("to_department_id", record.id),
+      ]);
+
+      for (const result of [devices, transferFrom, transferTo]) {
+        if (result.error) throw result.error;
+      }
+
+      const entries = [
+        { label: "Device records", total: devices.count ?? 0 },
+        { label: "Transfer records", total: (transferFrom.count ?? 0) + (transferTo.count ?? 0) },
+      ];
+
+      return { total: entries.reduce((sum, entry) => sum + entry.total, 0), entries };
+    }
+
+    const [devices, transferFrom, transferTo] = await Promise.all([
+      supabase.from("devices").select("id", { head: true, count: "exact" }).eq("location_id", record.id),
+      supabase.from("transfer_histories").select("id", { head: true, count: "exact" }).eq("from_location_id", record.id),
+      supabase.from("transfer_histories").select("id", { head: true, count: "exact" }).eq("to_location_id", record.id),
+    ]);
+
+    for (const result of [devices, transferFrom, transferTo]) {
+      if (result.error) throw result.error;
+    }
+
+    const entries = [
+      { label: "Device records", total: devices.count ?? 0 },
+      { label: "Transfer records", total: (transferFrom.count ?? 0) + (transferTo.count ?? 0) },
+    ];
+
+    return { total: entries.reduce((sum, entry) => sum + entry.total, 0), entries };
+  } catch (error) {
+    throw masterDataError(error);
   }
 }
 
@@ -1582,9 +2346,61 @@ function subscribeToAuthChanges(callback) {
 const app = document.getElementById("app");
 
 const deviceStatuses = ["Available", "Assigned", "In Repair", "In Storage", "Retired"];
-const deviceTypes = ["Desktop", "Laptop", "Printer", "Router", "Switch", "Monitor", "UPS", "Other"];
 const repairPriorities = ["Low", "Medium", "High", "Critical"];
 const repairStatuses = ["Pending", "Approved", "In Progress", "Completed", "Rejected"];
+const masterDataSections = [
+  {
+    key: "device-types",
+    label: "Device Types",
+    singular: "Device Type",
+    table: "device_types",
+    select: "id, code, name, description, is_active, updated_at",
+    searchColumns: ["code", "name", "description"],
+    normalizePayload: (payload) => ({
+      code: String(payload.code || "").trim().toUpperCase(),
+      name: String(payload.name || "").trim(),
+      description: toNullable(payload.description),
+    }),
+  },
+  {
+    key: "branches",
+    label: "Branches",
+    singular: "Branch",
+    table: "branches",
+    select: "id, code, name, is_active, updated_at",
+    searchColumns: ["code", "name"],
+    normalizePayload: (payload) => ({
+      code: String(payload.code || "").trim().toUpperCase(),
+      name: String(payload.name || "").trim(),
+    }),
+  },
+  {
+    key: "departments",
+    label: "Departments",
+    singular: "Department",
+    table: "departments",
+    select: "id, code, name, is_active, updated_at",
+    searchColumns: ["code", "name"],
+    normalizePayload: (payload) => ({
+      code: String(payload.code || "").trim().toUpperCase(),
+      name: String(payload.name || "").trim(),
+    }),
+  },
+  {
+    key: "locations",
+    label: "Locations",
+    singular: "Location",
+    table: "locations",
+    select: "id, branch_id, code, name, floor_label, is_active, updated_at, branches(name, is_active)",
+    searchColumns: ["code", "name", "floor_label"],
+    normalizePayload: (payload) => ({
+      branch_id: toNullable(payload.branch_id),
+      code: String(payload.code || "").trim().toUpperCase(),
+      name: String(payload.name || "").trim(),
+      floor_label: toNullable(payload.floor_label),
+    }),
+  },
+];
 const historyBadgeStyles = {
   Created: "badge info",
   Updated: "badge slate",
@@ -1595,6 +2411,45 @@ const historyBadgeStyles = {
   Transferred: "badge info",
   Archived: "badge archived",
 };
+
+function normalizeMasterEntity(entity) {
+  return masterDataSections.some((item) => item.key === entity) ? entity : "device-types";
+}
+
+function getMasterEntityConfig(entity) {
+  return masterDataSections.find((item) => item.key === normalizeMasterEntity(entity)) ?? masterDataSections[0];
+}
+
+function lookupOptionLabel(item) {
+  return `${item.name}${item.is_active === false ? " (Archived)" : ""}`;
+}
+
+function getLookupSelectItems(items = [], selectedValue = null, predicate = null) {
+  return items.filter((item) => {
+    if (predicate && !predicate(item)) {
+      return false;
+    }
+
+    return item.is_active !== false || item.id === selectedValue || item.name === selectedValue;
+  });
+}
+
+function buildConicGradient(items) {
+  const total = items.reduce((sum, item) => sum + Number(item.total ?? 0), 0);
+  if (!total) {
+    return "conic-gradient(#dbeafe 0deg 360deg)";
+  }
+
+  let cursor = 0;
+  const slices = items.map((item, index) => {
+    const share = (Number(item.total ?? 0) / total) * 360;
+    const start = cursor;
+    cursor += share;
+    return `${DASHBOARD_COLORS[index % DASHBOARD_COLORS.length]} ${start}deg ${cursor}deg`;
+  });
+
+  return `conic-gradient(${slices.join(", ")})`;
+}
 
 const state = {
   session: null,
@@ -1714,10 +2569,11 @@ function shell(mainContent, options = {}) {
   const navLinks = showAdminNav
     ? [
         ["/admin/dashboard", "Dashboard"],
-        ["/admin/devices", "Devices"],
-        ["/admin/repairs", "Repairs"],
-        ["/admin/transfers", "Transfers"],
-        ["/admin/history", "History"],
+        ["/admin/devices", "Device Management"],
+        ["/admin/repairs", "Repair Management"],
+        ["/admin/transfers", "Transfer Management"],
+        ["/admin/master-data", "Master Data"],
+        ["/admin/history", "System Records"],
       ]
     : [];
 
@@ -1729,7 +2585,7 @@ function shell(mainContent, options = {}) {
             <div class="brand-mark">IT</div>
             <div class="brand-copy">
               <h1>${escapeHtml(APP_TITLE)}</h1>
-              <p>GitHub-hosted inventory workspace with Supabase auth, QR routing, and audit workflows</p>
+              <p>Asset tracking, repair management, transfer management, and system records</p>
             </div>
           </div>
           <div class="top-actions">
@@ -1812,6 +2668,114 @@ function renderHistoryBadge(action) {
   return `<span class="${historyBadgeStyles[action] ?? "badge slate"}">${escapeHtml(action)}</span>`;
 }
 
+function renderKpiCard(label, value, caption) {
+  return `
+    <div class="kpi-card">
+      <span class="kpi-label">${escapeHtml(label)}</span>
+      <strong class="kpi-value">${escapeHtml(String(value))}</strong>
+      <span class="kpi-caption">${escapeHtml(caption)}</span>
+    </div>
+  `;
+}
+
+function renderSummaryTableRows(items, emptyLabel = "No records") {
+  if (!items.length) {
+    return `<tr><td colspan="2" class="muted">${escapeHtml(emptyLabel)}</td></tr>`;
+  }
+
+  return items
+    .map(
+      (item) => `
+        <tr>
+          <th>${escapeHtml(item.label)}</th>
+          <td><span class="pill-count">${escapeHtml(String(item.total ?? 0))}</span></td>
+        </tr>
+      `,
+    )
+    .join("");
+}
+
+function renderBarChart(items) {
+  const max = Math.max(...items.map((item) => Number(item.total ?? 0)), 0);
+
+  if (!items.length || max === 0) {
+    return emptyState("No chart data", "There is not enough device data to render this chart yet.");
+  }
+
+  return `
+    <div class="bar-chart">
+      ${items
+        .map((item) => {
+          const width = max > 0 ? Math.max(8, Math.round((Number(item.total ?? 0) / max) * 100)) : 0;
+          return `
+            <div class="bar-row">
+              <div class="bar-row-head">
+                <span>${escapeHtml(item.label)}</span>
+                <strong>${escapeHtml(String(item.total ?? 0))}</strong>
+              </div>
+              <div class="bar-track">
+                <div class="bar-fill" style="width: ${width}%;"></div>
+              </div>
+            </div>
+          `;
+        })
+        .join("")}
+    </div>
+  `;
+}
+
+function renderPieChart(items) {
+  const total = items.reduce((sum, item) => sum + Number(item.total ?? 0), 0);
+
+  if (!items.length || total === 0) {
+    return emptyState("No chart data", "There is not enough device data to render this chart yet.");
+  }
+
+  return `
+    <div class="pie-layout">
+      <div class="pie-visual" style="background: ${buildConicGradient(items)};">
+        <div class="pie-total">
+          <div>
+            <strong>${escapeHtml(String(total))}</strong>
+            <span>Total Devices</span>
+          </div>
+        </div>
+      </div>
+      <div class="pie-legend">
+        ${items
+          .map(
+            (item, index) => `
+              <div class="pie-legend-item">
+                <div class="pie-legend-label">
+                  <span class="legend-swatch" style="background: ${DASHBOARD_COLORS[index % DASHBOARD_COLORS.length]};"></span>
+                  <span>${escapeHtml(item.label)}</span>
+                </div>
+                <strong>${escapeHtml(String(item.total ?? 0))}</strong>
+              </div>
+            `,
+          )
+          .join("")}
+      </div>
+    </div>
+  `;
+}
+
+function renderMasterTabs(activeKey) {
+  return `
+    <div class="master-tabs">
+      ${masterDataSections
+        .map(
+          (section) => `
+            <a href="${routeHref(`/admin/master-data/${section.key}`)}" class="${activeKey === section.key ? "active" : ""}">
+              ${escapeHtml(section.label)}
+            </a>
+          `,
+        )
+        .join("")}
+    </div>
+  `;
+}
+
 function renderPagination(path, query, currentPage, totalPages) {
   if (totalPages <= 1) return "";
 
@@ -1881,6 +2845,18 @@ function parseAdminRepairRoute(path) {
   return null;
 }
 
+function parseAdminMasterDataRoute(path) {
+  const match = path.match(/^\/admin\/master-data(?:\/([^/]+))?$/);
+  if (!match) {
+    return null;
+  }
+
+  return {
+    kind: "admin-master-data",
+    entity: normalizeMasterEntity(decodeURIComponent(match[1] || "device-types")),
+  };
+}
+
 async function ensureAuthHydrated() {
   const session = await getSessionBundle();
   state.session = session;
@@ -1913,51 +2889,51 @@ function renderHomePage() {
   return shell(`
     <section class="hero">
       <div class="panel hero-main">
-        <p class="eyebrow">GitHub + Supabase</p>
-        <h2 class="hero-title">Professional IT asset operations from a single GitHub-hosted control center.</h2>
+        <p class="eyebrow">IT Inventory Management System</p>
+        <h2 class="hero-title">Professional IT asset tracking with secure device records, repair workflows, and transfer history.</h2>
         <p class="hero-copy">
-          This build stays static on the hosting side while Supabase handles authentication, data access,
-          audit history, repair requests, and QR-based device lookups. The interface is tuned for daily
-          admin work without adding server-side hosting overhead.
+          This GitHub-hosted client connects directly to Supabase for authentication, device management,
+          repair management, transfer management, QR access, and system records. It is organized for day-to-day
+          inventory operations while keeping the hosting layer fully static.
         </p>
         <div class="action-row" style="margin-top: 24px;">
           <a class="button primary" href="${dashboardLink}">${isAdmin() ? "Open Admin Dashboard" : "Admin Login"}</a>
-          <a class="button secondary" href="${routeHref("/admin/devices")}">Browse Devices</a>
+          <a class="button secondary" href="${routeHref("/admin/devices")}">Open Device Management</a>
         </div>
         <div class="stats-grid" style="margin-top: 24px;">
           <div class="stat-card">
             <strong>0</strong>
-            <span>No server runtime required on GitHub Pages</span>
+            <span>No separate application server required on GitHub Pages</span>
           </div>
           <div class="stat-card">
             <strong>5</strong>
-            <span>Initial history items loaded on public device pages</span>
+            <span>Recent history entries loaded by default on QR device pages</span>
           </div>
           <div class="stat-card">
             <strong>10</strong>
-            <span>Rows per admin table page to keep queries lean</span>
+            <span>Rows per admin page to keep queries lean and recoverable</span>
           </div>
         </div>
       </div>
 
       <div class="panel hero-side">
-        <p class="eyebrow">Efficiency Controls</p>
+        <p class="eyebrow">Core Modules</p>
         <div class="timeline" style="margin-top: 18px;">
           <div class="timeline-card">
-            <strong>Public QR page</strong>
-            <p class="muted">Loads only the device snapshot and the first small batch of history, transfers, and repairs.</p>
+            <strong>Asset Tracking</strong>
+            <p class="muted">QR device pages open directly to the current device record with recent activity.</p>
           </div>
           <div class="timeline-card">
-            <strong>Repair workflow</strong>
-            <p class="muted">Optional images are compressed in-browser before upload to Supabase Storage.</p>
+            <strong>Repair Management</strong>
+            <p class="muted">Users can submit repair requests, while admins manage status, technicians, and remarks.</p>
           </div>
           <div class="timeline-card">
-            <strong>Admin dashboard</strong>
-            <p class="muted">Cards use count-only queries and tables stay paginated with manual filtering.</p>
+            <strong>Transfer Management</strong>
+            <p class="muted">Assignment changes are recorded with location, department, and branch details.</p>
           </div>
           <div class="timeline-card">
-            <strong>QR generation</strong>
-            <p class="muted">QRs are generated on the client and never stored as image files.</p>
+            <strong>System Records</strong>
+            <p class="muted">Device history, repair updates, and transfer records stay searchable and paginated.</p>
           </div>
         </div>
       </div>
@@ -1987,7 +2963,7 @@ async function renderAdminLoginPage(query) {
       <section class="panel">
         <div class="panel-pad">
           <p class="eyebrow">Admin Security</p>
-          <h2 class="section-title">Sign in before editing devices, repairs, or transfers.</h2>
+          <h2 class="section-title">Sign in before managing devices, repairs, transfers, or master data.</h2>
           <p class="section-copy">
             Public QR pages remain open, but every sensitive inventory action requires an authenticated
             admin profile from Supabase Auth and the <code>profiles.role = 'admin'</code> check.
@@ -2025,65 +3001,175 @@ async function renderAdminLoginPage(query) {
 }
 
 async function renderAdminDashboardPage() {
-  const [counts, recentDevices] = await Promise.all([getDashboardCounts(), getRecentDevices()]);
+  const [kpis, recentDevices, statusSummary, branchSummary, deviceTypeSummary, monthlySummary] = await Promise.all([
+    getDashboardKpis(),
+    getRecentDevices(),
+    getDashboardStatusSummary(),
+    getDashboardBranchSummary(),
+    getDashboardDeviceTypeSummary(),
+    getDashboardMonthlySummary(),
+  ]);
+
+  const inventorySummary = statusSummary.length ? statusSummary : [];
+  const categorySummary = deviceTypeSummary.slice(0, 6);
 
   return shell(`
-    <section class="page-grid">
-      <section class="panel">
-        <div class="panel-pad">
-          <div class="section-head">
-            <div>
-              <p class="eyebrow">Dashboard</p>
-              <h2 class="section-title">Low-egress admin control center</h2>
-              <p class="section-copy">Counts are fetched with head-only queries and the recent device feed stays small.</p>
-            </div>
-          </div>
-          <div class="stats-grid" style="margin-top: 22px;">
-            ${renderMetricCard("Active Devices", counts.totalDevices, "Count query only")}
-            ${renderMetricCard("Pending Repairs", counts.pendingRepairs, "Waiting for approval")}
-            ${renderMetricCard("Active Repairs", counts.activeRepairs, "Approved or in progress")}
-            ${renderMetricCard("Transfers This Month", counts.transfersThisMonth, "Current month only")}
-          </div>
+    <section class="dashboard-grid">
+      <section class="section-block">
+        <div>
+          <p class="eyebrow">Dashboard</p>
+          <h2 class="section-title">IT asset dashboard</h2>
+          <p class="section-copy">Key metrics, recent device records, category summaries, and monthly activity in one structured view.</p>
+        </div>
+        <div class="dashboard-kpis">
+          ${renderKpiCard("Total Devices", kpis.total_devices ?? 0, "Active inventory records")}
+          ${renderKpiCard("Devices In Use", kpis.devices_in_use ?? 0, "Assigned to users or teams")}
+          ${renderKpiCard("Devices In Repair", kpis.devices_in_repair ?? 0, "Current repair workload")}
+          ${renderKpiCard("Unassigned Devices", kpis.unassigned_devices ?? 0, "Available for deployment")}
         </div>
       </section>
 
-      <section class="panel">
-        <div class="panel-pad">
-          <div class="section-head">
-            <div>
-              <p class="eyebrow">Recently Updated</p>
-              <h3 class="panel-title">Latest device activity</h3>
+      <section class="dashboard-middle">
+        <section class="panel">
+          <div class="panel-pad section-block">
+            <div class="section-head">
+              <div>
+                <p class="eyebrow">Recent Devices</p>
+                <h3 class="panel-title">Latest asset records</h3>
+                <p class="section-subtitle">A compact view of recent inventory updates with direct links to edit or open the QR page.</p>
+              </div>
+              <a class="button secondary" href="${routeHref("/admin/devices")}">Open Device Management</a>
             </div>
-            <a class="button secondary" href="${routeHref("/admin/devices")}">Manage Devices</a>
+
+            <div class="table-shell">
+              <div class="table-scroll">
+                <table class="dashboard-table">
+                  <thead>
+                    <tr>
+                      <th>Device Name</th>
+                      <th>Type</th>
+                      <th>Assigned To</th>
+                      <th>Status</th>
+                      <th>Date Acquired</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${
+                      recentDevices.length
+                        ? recentDevices
+                            .map(
+                              (device) => `
+                                <tr>
+                                  <td>
+                                    <strong>${escapeHtml(device.device_name)}</strong>
+                                    <div class="muted">${escapeHtml(device.asset_code)}</div>
+                                  </td>
+                                  <td>${escapeHtml(device.device_type)}</td>
+                                  <td>${escapeHtml(device.assigned_to ?? "Unassigned")}</td>
+                                  <td>${renderBadge(device.status, device.status === "In Repair" ? "rose" : "info")}</td>
+                                  <td>${escapeHtml(device.date_acquired ? formatDate(device.date_acquired) : "Not recorded")}</td>
+                                </tr>
+                              `,
+                            )
+                            .join("")
+                        : `<tr><td colspan="5">${emptyState("No device records yet", "Create your first device record to start asset tracking.")}</td></tr>`
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="table-actions">
+              <a class="ghost-button table-action" href="${routeHref("/admin/devices/new")}">Add Device</a>
+              <a class="ghost-button table-action" href="${routeHref("/admin/devices")}">View All Devices</a>
+            </div>
           </div>
-          <div class="timeline" style="margin-top: 20px;">
-            ${
-              recentDevices.length
-                ? recentDevices
-                    .map(
-                      (device) => `
-                        <div class="timeline-card">
-                          <div class="split">
-                            <strong>${escapeHtml(device.asset_code)} · ${escapeHtml(device.device_name)}</strong>
-                            ${renderBadge(device.status, "info")}
-                          </div>
-                          <p class="muted">Updated ${escapeHtml(formatDateTime(device.updated_at))}</p>
-                          <div class="action-row" style="margin-top: 12px;">
-                            <a class="tiny-link" href="${routeHref(`/device/${encodeURIComponent(device.qr_slug)}`)}">Open QR Page</a>
-                            <a class="tiny-link" href="${routeHref(`/admin/devices/${encodeURIComponent(device.id)}/edit`)}">Edit Device</a>
-                          </div>
-                        </div>
-                      `,
-                    )
-                    .join("")
-                : emptyState(
-                    "No devices yet",
-                    "Create your first device to start the QR workflow and dashboard activity feed.",
-                    `<a class="button primary" href="${routeHref("/admin/devices/new")}">Create Device</a>`,
-                  )
-            }
+        </section>
+
+        <section class="utility-grid">
+          <section class="panel">
+            <div class="panel-pad section-block">
+              <div>
+                <p class="eyebrow">Inventory Summary</p>
+                <h3 class="panel-title">Devices by status</h3>
+              </div>
+              <table class="summary-table">
+                <tbody>${renderSummaryTableRows(inventorySummary, "No inventory summary available.")}</tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-pad section-block">
+              <div>
+                <p class="eyebrow">Devices By Category</p>
+                <h3 class="panel-title">Current category mix</h3>
+              </div>
+              <table class="summary-table">
+                <tbody>${renderSummaryTableRows(categorySummary, "No category summary available.")}</tbody>
+              </table>
+            </div>
+          </section>
+        </section>
+      </section>
+
+      <section class="dashboard-bottom">
+        <section class="panel">
+          <div class="panel-pad section-block">
+            <div>
+              <p class="eyebrow">Devices By Branch</p>
+              <h3 class="panel-title">Branch distribution</h3>
+            </div>
+            ${renderBarChart(branchSummary)}
           </div>
-        </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-pad section-block">
+            <div>
+              <p class="eyebrow">Device Types Distribution</p>
+              <h3 class="panel-title">Category share</h3>
+            </div>
+            ${renderPieChart(deviceTypeSummary)}
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-pad section-block">
+            <div>
+              <p class="eyebrow">Monthly Summary</p>
+              <h3 class="panel-title">Operational activity</h3>
+            </div>
+            <table class="metric-table">
+              <thead>
+                <tr>
+                  <th>Month</th>
+                  <th>Devices Added</th>
+                  <th>Repairs</th>
+                  <th>Transfers</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${
+                  monthlySummary.length
+                    ? monthlySummary
+                        .map(
+                          (row) => `
+                            <tr>
+                              <td>${escapeHtml(row.month_label)}</td>
+                              <td>${escapeHtml(String(row.devices_added ?? 0))}</td>
+                              <td>${escapeHtml(String(row.repairs_logged ?? 0))}</td>
+                              <td>${escapeHtml(String(row.transfers_logged ?? 0))}</td>
+                            </tr>
+                          `,
+                        )
+                        .join("")
+                    : `<tr><td colspan="4" class="muted">No monthly activity available.</td></tr>`
+                }
+              </tbody>
+            </table>
+          </div>
+        </section>
       </section>
     </section>
   `);
@@ -2095,8 +3181,8 @@ function renderDeviceTableRows(devices) {
       (device) => `
         <tr>
           <td>
-            <strong>${escapeHtml(device.asset_code)} · ${escapeHtml(device.device_name)}</strong>
-            <div class="muted">${escapeHtml(device.qr_slug)}</div>
+            <strong class="table-card-title">${escapeHtml(device.device_name)}</strong>
+            <div class="muted">${escapeHtml(device.asset_code)} · ${escapeHtml(device.qr_slug)}</div>
           </td>
           <td>${escapeHtml(device.device_type)}</td>
           <td>
@@ -2107,26 +3193,21 @@ function renderDeviceTableRows(devices) {
               ${escapeHtml(device.locations?.name ?? "No location")}
             </div>
           </td>
+          <td>${renderBadge(device.status, device.status === "In Repair" ? "rose" : "info")}</td>
+          <td>${escapeHtml(device.date_acquired ? formatDate(device.date_acquired) : "Not recorded")}</td>
           <td>
-            <div class="chip-row">
-              ${renderBadge(device.status, "info")}
-              ${renderBadge(device.is_active ? "Active" : "Archived", device.is_active ? "active" : "archived")}
-            </div>
-          </td>
-          <td>${escapeHtml(formatDateTime(device.updated_at))}</td>
-          <td>
-            <div class="helper-list">
-              <a class="tiny-link" href="${routeHref(`/admin/devices/${encodeURIComponent(device.id)}/edit`)}">Edit</a>
+            <div class="table-actions">
+              <a class="ghost-button table-action" href="${routeHref(`/admin/devices/${encodeURIComponent(device.id)}/edit`)}">Edit</a>
               ${
                 device.is_active
                   ? `
-                    <a class="tiny-link" href="${routeHref(`/device/${encodeURIComponent(device.qr_slug)}`)}">QR Page</a>
-                    <a class="tiny-link" href="${routeHref("/admin/transfers", { device: device.id })}">Transfer</a>
-                    <button class="tiny-link danger" data-action="archive-device" data-device-id="${escapeHtml(device.id)}">Archive</button>
+                    <a class="ghost-button table-action" href="${routeHref(`/device/${encodeURIComponent(device.qr_slug)}`)}">QR Page</a>
+                    <a class="ghost-button table-action" href="${routeHref("/admin/transfers", { device: device.id })}">Transfer</a>
+                    <button class="ghost-button table-action danger" data-action="archive-device" data-device-id="${escapeHtml(device.id)}">Archive</button>
                   `
                   : `
-                    <span class="muted">Public hidden</span>
-                    <button class="tiny-link success" data-action="restore-device" data-device-id="${escapeHtml(device.id)}">Restore</button>
+                    ${renderBadge("Archived", "archived")}
+                    <button class="ghost-button table-action success" data-action="restore-device" data-device-id="${escapeHtml(device.id)}">Restore</button>
                   `
               }
             </div>
@@ -2140,12 +3221,19 @@ function renderDeviceTableRows(devices) {
 async function renderAdminDevicesPage(query) {
   const page = Number(query.page ?? 1) || 1;
   const visibility = query.visibility || "all";
-  const result = await getDevices({
-    page,
-    search: query.q,
-    status: query.status,
-    visibility,
-  });
+  const [lookups, result] = await Promise.all([
+    getLookupData(),
+    getDevices({
+      page,
+      search: query.q,
+      status: query.status,
+      visibility,
+      deviceType: query.deviceType,
+      branchId: query.branchId,
+      departmentId: query.departmentId,
+      locationId: query.locationId,
+    }),
+  ]);
   const totalPages = Math.max(1, Math.ceil(result.total / ADMIN_PAGE_SIZE));
 
   return shell(`
@@ -2154,9 +3242,9 @@ async function renderAdminDevicesPage(query) {
         <div class="panel-pad">
           <div class="section-head">
             <div>
-              <p class="eyebrow">Inventory Feed</p>
-              <h2 class="section-title">Archive-safe device management</h2>
-              <p class="section-copy">Archived records stay recoverable and visible to admins instead of disappearing like deletes.</p>
+              <p class="eyebrow">Device Management</p>
+              <h2 class="section-title">Asset tracking records</h2>
+              <p class="section-copy">Manage device details, assignment, status, QR access, and recoverable archive states from one device table.</p>
             </div>
             <div class="page-actions">
               <button class="button secondary" data-action="export-devices">CSV</button>
@@ -2166,41 +3254,93 @@ async function renderAdminDevicesPage(query) {
 
           <div class="chip-row" style="margin-top: 20px;">
             <a href="${routeHref("/admin/devices", { ...query, page: 1, visibility: "all" })}" class="chip ${visibility === "all" ? "active" : ""}">All Devices</a>
-            <a href="${routeHref("/admin/devices", { ...query, page: 1, visibility: "active" })}" class="chip ${visibility === "active" ? "active" : ""}">Active Only</a>
-            <a href="${routeHref("/admin/devices", { ...query, page: 1, visibility: "archived" })}" class="chip ${visibility === "archived" ? "active" : ""}">Archived Only</a>
+            <a href="${routeHref("/admin/devices", { ...query, page: 1, visibility: "active" })}" class="chip ${visibility === "active" ? "active" : ""}">Active</a>
+            <a href="${routeHref("/admin/devices", { ...query, page: 1, visibility: "archived" })}" class="chip ${visibility === "archived" ? "active" : ""}">Archived</a>
           </div>
 
-          <div class="filter-row" style="margin-top: 18px;">
-            <div class="field" style="min-width: min(360px, 100%); flex: 1;">
-              <label for="device-search">Search Devices</label>
-              <input class="input" id="device-search" data-search-route="/admin/devices" data-preserve="status,visibility" type="search" value="${escapeHtml(query.q ?? "")}" placeholder="Asset code, name, or serial number" />
+          <div class="filter-shell" style="margin-top: 18px;">
+            <div class="filter-row">
+              <div class="field" style="min-width: min(360px, 100%); flex: 1;">
+                <label for="device-search">Search Devices</label>
+                <input class="input" id="device-search" data-search-route="/admin/devices" data-preserve="status,visibility,deviceType,branchId,departmentId,locationId" type="search" value="${escapeHtml(query.q ?? "")}" placeholder="Asset code, device name, or serial number" />
+              </div>
             </div>
-            <div class="field" style="min-width: 220px;">
-              <label for="device-status-filter">Status</label>
-              <select class="select" id="device-status-filter" data-filter-route="/admin/devices" data-preserve="q,visibility">
-                <option value="">All statuses</option>
-                ${deviceStatuses
-                  .map(
-                    (status) =>
-                      `<option value="${escapeHtml(status)}" ${query.status === status ? "selected" : ""}>${escapeHtml(status)}</option>`,
-                  )
-                  .join("")}
-              </select>
+            <div class="toolbar-grid">
+              <div class="field">
+                <label for="device-type-filter">Device Type</label>
+                <select class="select" id="device-type-filter" data-filter-route="/admin/devices" data-filter-key="deviceType" data-preserve="q,visibility,status,branchId,departmentId,locationId">
+                  <option value="">All device types</option>
+                  ${lookups.deviceTypes
+                    .map(
+                      (type) =>
+                        `<option value="${escapeHtml(type.name)}" ${query.deviceType === type.name ? "selected" : ""}>${escapeHtml(lookupOptionLabel(type))}</option>`,
+                    )
+                    .join("")}
+                </select>
+              </div>
+              <div class="field">
+                <label for="device-branch-filter">Branch</label>
+                <select class="select" id="device-branch-filter" data-filter-route="/admin/devices" data-filter-key="branchId" data-preserve="q,visibility,status,deviceType,departmentId,locationId" data-reset-keys="locationId">
+                  <option value="">All branches</option>
+                  ${lookups.branches
+                    .map(
+                      (branch) =>
+                        `<option value="${escapeHtml(branch.id)}" ${query.branchId === branch.id ? "selected" : ""}>${escapeHtml(lookupOptionLabel(branch))}</option>`,
+                    )
+                    .join("")}
+                </select>
+              </div>
+              <div class="field">
+                <label for="device-department-filter">Department</label>
+                <select class="select" id="device-department-filter" data-filter-route="/admin/devices" data-filter-key="departmentId" data-preserve="q,visibility,status,deviceType,branchId,locationId">
+                  <option value="">All departments</option>
+                  ${lookups.departments
+                    .map(
+                      (department) =>
+                        `<option value="${escapeHtml(department.id)}" ${query.departmentId === department.id ? "selected" : ""}>${escapeHtml(lookupOptionLabel(department))}</option>`,
+                    )
+                    .join("")}
+                </select>
+              </div>
+              <div class="field">
+                <label for="device-location-filter">Location</label>
+                <select class="select" id="device-location-filter" data-filter-route="/admin/devices" data-filter-key="locationId" data-preserve="q,visibility,status,deviceType,branchId,departmentId">
+                  <option value="">All locations</option>
+                  ${lookups.locations
+                    .map(
+                      (location) =>
+                        `<option value="${escapeHtml(location.id)}" data-branch-id="${escapeHtml(location.branch_id)}" ${query.locationId === location.id ? "selected" : ""}>${escapeHtml(lookupOptionLabel(location))}</option>`,
+                    )
+                    .join("")}
+                </select>
+              </div>
+              <div class="field">
+                <label for="device-status-filter">Status</label>
+                <select class="select" id="device-status-filter" data-filter-route="/admin/devices" data-filter-key="status" data-preserve="q,visibility,deviceType,branchId,departmentId,locationId">
+                  <option value="">All statuses</option>
+                  ${deviceStatuses
+                    .map(
+                      (status) =>
+                        `<option value="${escapeHtml(status)}" ${query.status === status ? "selected" : ""}>${escapeHtml(status)}</option>`,
+                    )
+                    .join("")}
+                </select>
+              </div>
             </div>
           </div>
 
-          <div class="alert info" style="margin-top: 18px;">Archived devices are hidden from the public QR route until restored.</div>
+          <div class="alert info" style="margin-top: 18px;">Archived devices remain recoverable for administrators and are hidden from public QR access until restored.</div>
 
           <div class="table-shell" style="margin-top: 20px;">
             <div class="table-scroll">
               <table>
                 <thead>
                   <tr>
-                    <th>Asset</th>
+                    <th>Device Name</th>
                     <th>Type</th>
-                    <th>Assignment</th>
+                    <th>Assigned To</th>
                     <th>Status</th>
-                    <th>Updated</th>
+                    <th>Date Acquired</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
@@ -2236,9 +3376,9 @@ function renderDeviceForm(device, lookups, qrUrl) {
         <div class="panel-pad">
           <div class="section-head">
             <div>
-              <p class="eyebrow">Device Editor</p>
+              <p class="eyebrow">Device Management</p>
               <h2 class="section-title">${escapeHtml(formTitle)}</h2>
-              <p class="section-copy">All major edits are logged automatically by database triggers.</p>
+              <p class="section-copy">Device changes, status updates, transfers, and repair actions remain recoverable through system records.</p>
             </div>
           </div>
 
@@ -2259,10 +3399,10 @@ function renderDeviceForm(device, lookups, qrUrl) {
             <div class="field">
               <label for="device_type">Device Type</label>
               <select class="select" id="device_type" name="device_type" required>
-                ${deviceTypes
+                ${getLookupSelectItems(lookups.deviceTypes, device?.device_type, null)
                   .map(
                     (type) =>
-                      `<option value="${escapeHtml(type)}" ${(device?.device_type ?? "Laptop") === type ? "selected" : ""}>${escapeHtml(type)}</option>`,
+                      `<option value="${escapeHtml(type.name)}" ${(device?.device_type ?? "Laptop") === type.name ? "selected" : ""}>${escapeHtml(lookupOptionLabel(type))}</option>`,
                   )
                   .join("")}
               </select>
@@ -2302,10 +3442,10 @@ function renderDeviceForm(device, lookups, qrUrl) {
               <label for="department_id">Department</label>
               <select class="select" id="department_id" name="department_id">
                 <option value="">Unassigned</option>
-                ${lookups.departments
+                ${getLookupSelectItems(lookups.departments, device?.department_id)
                   .map(
                     (department) =>
-                      `<option value="${escapeHtml(department.id)}" ${device?.department_id === department.id ? "selected" : ""}>${escapeHtml(department.name)}</option>`,
+                      `<option value="${escapeHtml(department.id)}" ${device?.department_id === department.id ? "selected" : ""}>${escapeHtml(lookupOptionLabel(department))}</option>`,
                   )
                   .join("")}
               </select>
@@ -2314,10 +3454,10 @@ function renderDeviceForm(device, lookups, qrUrl) {
               <label for="branch_id">Branch</label>
               <select class="select" id="branch_id" name="branch_id">
                 <option value="">Unassigned</option>
-                ${lookups.branches
+                ${getLookupSelectItems(lookups.branches, device?.branch_id)
                   .map(
                     (branch) =>
-                      `<option value="${escapeHtml(branch.id)}" ${device?.branch_id === branch.id ? "selected" : ""}>${escapeHtml(branch.name)}</option>`,
+                      `<option value="${escapeHtml(branch.id)}" ${device?.branch_id === branch.id ? "selected" : ""}>${escapeHtml(lookupOptionLabel(branch))}</option>`,
                   )
                   .join("")}
               </select>
@@ -2326,10 +3466,10 @@ function renderDeviceForm(device, lookups, qrUrl) {
               <label for="location_id">Location</label>
               <select class="select" id="location_id" name="location_id">
                 <option value="">Unassigned</option>
-                ${lookups.locations
+                ${getLookupSelectItems(lookups.locations, device?.location_id)
                   .map(
                     (location) =>
-                      `<option value="${escapeHtml(location.id)}" data-branch-id="${escapeHtml(location.branch_id)}" ${device?.location_id === location.id ? "selected" : ""}>${escapeHtml(location.name)}</option>`,
+                      `<option value="${escapeHtml(location.id)}" data-branch-id="${escapeHtml(location.branch_id)}" ${device?.location_id === location.id ? "selected" : ""}>${escapeHtml(lookupOptionLabel(location))}</option>`,
                   )
                   .join("")}
               </select>
@@ -2377,9 +3517,9 @@ function renderDeviceForm(device, lookups, qrUrl) {
 
       <section class="panel detail-shell">
         <div class="panel-pad">
-          <p class="eyebrow">Dynamic QR</p>
-          <h3 class="panel-title">Printable device label</h3>
-          <p class="section-copy">QR images are generated locally in the browser and never stored in Supabase.</p>
+          <p class="eyebrow">Asset Tracking</p>
+          <h3 class="panel-title">Printable QR label</h3>
+          <p class="section-copy">The QR code is generated locally in the browser and links directly to the public device page.</p>
           <div class="qr-canvas-shell" style="margin-top: 20px;">
             <canvas id="device-qr-canvas" width="240" height="240" class="${hasPreview ? "" : "hidden"}"></canvas>
             <p id="device-qr-placeholder" class="qr-placeholder ${hasPreview ? "hidden" : ""}">
@@ -2481,8 +3621,8 @@ function renderPublicActivityCards(historyItems, transferItems, repairItems, slu
         <div class="panel-pad">
           <div class="section-head">
             <div>
-              <p class="eyebrow">Recent Device History</p>
-              <h3 class="panel-title">Audit trail</h3>
+              <p class="eyebrow">System Records</p>
+              <h3 class="panel-title">Recent device history</h3>
             </div>
             <button class="ghost-button" data-action="load-history" data-slug="${escapeHtml(slug)}" data-offset="${historyItems.length}">Load More</button>
           </div>
@@ -2547,9 +3687,9 @@ async function renderPublicDevicePage(slug) {
           <div class="panel-pad">
             <div class="section-head">
               <div>
-                <p class="eyebrow">Device Snapshot</p>
+                <p class="eyebrow">Asset Tracking</p>
                 <h2 class="section-title">${escapeHtml(device.asset_code)} · ${escapeHtml(device.device_name)}</h2>
-                <p class="section-copy">This QR page stays intentionally lean while still exposing the latest useful asset context.</p>
+                <p class="section-copy">This QR page keeps the device record lightweight while still showing the latest useful asset details and activity.</p>
               </div>
               <div class="chip-row">
                 ${renderBadge(device.status, "info")}
@@ -2585,8 +3725,8 @@ async function renderPublicDevicePage(slug) {
             </div>
 
             <div class="action-row" style="margin-top: 20px;">
-              <a class="button primary" href="${routeHref(`/device/${encodeURIComponent(device.qr_slug)}/edit`)}">Admin Edit</a>
-              <a class="button secondary" href="#repair-form">Request Repair</a>
+              <a class="button primary" href="${routeHref(`/device/${encodeURIComponent(device.qr_slug)}/edit`)}">Edit Device</a>
+              <a class="button secondary" href="#repair-form">Submit Repair Request</a>
             </div>
           </div>
         </section>
@@ -2594,7 +3734,7 @@ async function renderPublicDevicePage(slug) {
         <section class="panel">
           <div class="panel-pad">
             <p class="eyebrow">Repair Request</p>
-            <h3 class="panel-title">Report an issue with this device</h3>
+            <h3 class="panel-title">Report a device issue</h3>
             <p class="section-copy">Optional images are compressed before upload to reduce storage and egress.</p>
 
             <form id="repair-form" class="form-grid" style="margin-top: 20px;">
@@ -2627,7 +3767,7 @@ async function renderPublicDevicePage(slug) {
                 <p class="helper-text">Client-side compression keeps uploads smaller before they reach Supabase Storage.</p>
               </div>
               <div class="action-row full">
-                <button class="button primary" type="submit">Request Repair</button>
+                <button class="button primary" type="submit">Submit Repair Request</button>
               </div>
             </form>
           </div>
@@ -2666,9 +3806,9 @@ async function renderAdminRepairsPage(query) {
       <div class="panel-pad">
         <div class="section-head">
           <div>
-            <p class="eyebrow">Repair Requests</p>
-            <h2 class="section-title">Repair queue</h2>
-            <p class="section-copy">Status filters and pagination keep the repair table small and responsive.</p>
+            <p class="eyebrow">Repair Management</p>
+            <h2 class="section-title">Repair requests</h2>
+            <p class="section-copy">Track incoming repair requests, technician assignment, and request status in one queue.</p>
           </div>
         </div>
 
@@ -2679,7 +3819,7 @@ async function renderAdminRepairsPage(query) {
           </div>
           <div class="field" style="min-width: 220px;">
             <label for="repair-status-filter">Status</label>
-            <select class="select" id="repair-status-filter" data-filter-route="/admin/repairs" data-preserve="q">
+            <select class="select" id="repair-status-filter" data-filter-route="/admin/repairs" data-filter-key="status" data-preserve="q">
               <option value="">All statuses</option>
               ${repairStatuses
                 .map(
@@ -2753,7 +3893,7 @@ async function renderAdminRepairDetailPage(id) {
     <section class="detail-grid">
       <section class="panel detail-shell">
         <div class="panel-pad">
-          <p class="eyebrow">Request Snapshot</p>
+          <p class="eyebrow">Repair Management</p>
           <h2 class="section-title">${escapeHtml(repair.devices?.asset_code ?? "")} · ${escapeHtml(repair.devices?.device_name ?? "")}</h2>
           <div class="detail-list" style="margin-top: 20px;">
             <p><span class="muted">Requester:</span> ${escapeHtml(repair.requester_name)}</p>
@@ -2779,7 +3919,7 @@ async function renderAdminRepairDetailPage(id) {
       <section class="panel form-shell">
         <div class="panel-pad">
           <p class="eyebrow">Repair Update</p>
-          <h3 class="panel-title">Move the workflow forward</h3>
+          <h3 class="panel-title">Update repair status</h3>
           <form id="repair-update-form" class="form-grid" style="margin-top: 20px;">
             <input type="hidden" name="repair_id" value="${escapeHtml(repair.id)}" />
             <div class="field">
@@ -2833,9 +3973,9 @@ async function renderAdminTransfersPage(query) {
         <div class="panel-pad">
           <div class="section-head">
             <div>
-              <p class="eyebrow">Transfers</p>
-              <h2 class="section-title">Assignment handoff</h2>
-              <p class="section-copy">Start transfers from the device list so this page never needs to load a huge device picker.</p>
+              <p class="eyebrow">Transfer Management</p>
+              <h2 class="section-title">Transfer records</h2>
+              <p class="section-copy">Move device assignment, branch, department, or location while preserving transfer history.</p>
             </div>
           </div>
 
@@ -2856,10 +3996,10 @@ async function renderAdminTransfersPage(query) {
                     <label for="to_department_id">New Department</label>
                     <select class="select" id="to_department_id" name="to_department_id">
                       <option value="">Unassigned</option>
-                      ${lookups.departments
+                      ${getLookupSelectItems(lookups.departments, selectedDevice.department_id)
                         .map(
                           (department) =>
-                            `<option value="${escapeHtml(department.id)}" ${selectedDevice.department_id === department.id ? "selected" : ""}>${escapeHtml(department.name)}</option>`,
+                            `<option value="${escapeHtml(department.id)}" ${selectedDevice.department_id === department.id ? "selected" : ""}>${escapeHtml(lookupOptionLabel(department))}</option>`,
                         )
                         .join("")}
                     </select>
@@ -2868,10 +4008,10 @@ async function renderAdminTransfersPage(query) {
                     <label for="to_branch_id">New Branch</label>
                     <select class="select" id="to_branch_id" name="to_branch_id">
                       <option value="">Unassigned</option>
-                      ${lookups.branches
+                      ${getLookupSelectItems(lookups.branches, selectedDevice.branch_id)
                         .map(
                           (branch) =>
-                            `<option value="${escapeHtml(branch.id)}" ${selectedDevice.branch_id === branch.id ? "selected" : ""}>${escapeHtml(branch.name)}</option>`,
+                            `<option value="${escapeHtml(branch.id)}" ${selectedDevice.branch_id === branch.id ? "selected" : ""}>${escapeHtml(lookupOptionLabel(branch))}</option>`,
                         )
                         .join("")}
                     </select>
@@ -2880,10 +4020,10 @@ async function renderAdminTransfersPage(query) {
                     <label for="to_location_id">New Location</label>
                     <select class="select" id="to_location_id" name="to_location_id">
                       <option value="">Unassigned</option>
-                      ${lookups.locations
+                      ${getLookupSelectItems(lookups.locations, selectedDevice.location_id)
                         .map(
                           (location) =>
-                            `<option value="${escapeHtml(location.id)}" data-branch-id="${escapeHtml(location.branch_id)}" ${selectedDevice.location_id === location.id ? "selected" : ""}>${escapeHtml(location.name)}</option>`,
+                            `<option value="${escapeHtml(location.id)}" data-branch-id="${escapeHtml(location.branch_id)}" ${selectedDevice.location_id === location.id ? "selected" : ""}>${escapeHtml(lookupOptionLabel(location))}</option>`,
                         )
                         .join("")}
                     </select>
@@ -2914,8 +4054,8 @@ async function renderAdminTransfersPage(query) {
         <div class="panel-pad">
           <div class="section-head">
             <div>
-              <p class="eyebrow">Transfer Log</p>
-              <h3 class="panel-title">Recent movement</h3>
+              <p class="eyebrow">Transfer Records</p>
+              <h3 class="panel-title">Recent transfers</h3>
             </div>
           </div>
 
@@ -2981,9 +4121,9 @@ async function renderAdminHistoryPage(query) {
       <div class="panel-pad">
         <div class="section-head">
           <div>
-            <p class="eyebrow">Device History</p>
-            <h2 class="section-title">Audit trail</h2>
-            <p class="section-copy">The history stream is paginated and searchable so it stays useful without dragging down every session.</p>
+            <p class="eyebrow">System Records</p>
+            <h2 class="section-title">Device history</h2>
+            <p class="section-copy">Review paginated system records for created, updated, repaired, transferred, and archived devices.</p>
           </div>
         </div>
 
@@ -3022,11 +4162,286 @@ async function renderAdminHistoryPage(query) {
   `);
 }
 
+function renderMasterForm(entity, record, lookups) {
+  const config = getMasterEntityConfig(entity);
+  const title = record?.id ? `Edit ${config.singular}` : `Add ${config.singular}`;
+
+  if (entity === "device-types") {
+    return `
+      <form id="master-data-form" class="form-grid" style="margin-top: 18px;">
+        <input type="hidden" name="entity" value="${escapeHtml(entity)}" />
+        <input type="hidden" name="recordId" value="${escapeHtml(record?.id ?? "")}" />
+        <div class="field">
+          <label for="master-code">Code</label>
+          <input class="input" id="master-code" name="code" required value="${escapeHtml(record?.code ?? "")}" />
+        </div>
+        <div class="field">
+          <label for="master-name">Name</label>
+          <input class="input" id="master-name" name="name" required value="${escapeHtml(record?.name ?? "")}" />
+        </div>
+        <div class="field full">
+          <label for="master-description">Description</label>
+          <textarea class="textarea" id="master-description" name="description">${escapeHtml(record?.description ?? "")}</textarea>
+        </div>
+        <div class="master-form-actions full">
+          <button class="button primary" type="submit">${escapeHtml(record?.id ? "Save Changes" : "Add Device Type")}</button>
+          ${record?.id ? `<a class="button secondary" href="${routeHref(`/admin/master-data/${entity}`)}">Cancel</a>` : ""}
+        </div>
+      </form>
+    `;
+  }
+
+  if (entity === "locations") {
+    return `
+      <form id="master-data-form" class="form-grid" style="margin-top: 18px;">
+        <input type="hidden" name="entity" value="${escapeHtml(entity)}" />
+        <input type="hidden" name="recordId" value="${escapeHtml(record?.id ?? "")}" />
+        <div class="field">
+          <label for="master-branch">Branch</label>
+          <select class="select" id="master-branch" name="branch_id" required>
+            <option value="">Select branch</option>
+            ${getLookupSelectItems(lookups.branches, record?.branch_id)
+              .map(
+                (branch) =>
+                  `<option value="${escapeHtml(branch.id)}" ${record?.branch_id === branch.id ? "selected" : ""}>${escapeHtml(lookupOptionLabel(branch))}</option>`,
+              )
+              .join("")}
+          </select>
+        </div>
+        <div class="field">
+          <label for="master-code">Code</label>
+          <input class="input" id="master-code" name="code" required value="${escapeHtml(record?.code ?? "")}" />
+        </div>
+        <div class="field">
+          <label for="master-name">Name</label>
+          <input class="input" id="master-name" name="name" required value="${escapeHtml(record?.name ?? "")}" />
+        </div>
+        <div class="field">
+          <label for="master-floor-label">Floor / Area</label>
+          <input class="input" id="master-floor-label" name="floor_label" value="${escapeHtml(record?.floor_label ?? "")}" />
+        </div>
+        <div class="master-form-actions full">
+          <button class="button primary" type="submit">${escapeHtml(record?.id ? "Save Changes" : "Add Location")}</button>
+          ${record?.id ? `<a class="button secondary" href="${routeHref(`/admin/master-data/${entity}`)}">Cancel</a>` : ""}
+        </div>
+      </form>
+    `;
+  }
+
+  return `
+    <form id="master-data-form" class="form-grid" style="margin-top: 18px;">
+      <input type="hidden" name="entity" value="${escapeHtml(entity)}" />
+      <input type="hidden" name="recordId" value="${escapeHtml(record?.id ?? "")}" />
+      <div class="field">
+        <label for="master-code">Code</label>
+        <input class="input" id="master-code" name="code" required value="${escapeHtml(record?.code ?? "")}" />
+      </div>
+      <div class="field">
+        <label for="master-name">Name</label>
+        <input class="input" id="master-name" name="name" required value="${escapeHtml(record?.name ?? "")}" />
+      </div>
+      <div class="master-form-actions full">
+        <button class="button primary" type="submit">${escapeHtml(record?.id ? "Save Changes" : `Add ${config.singular}`)}</button>
+        ${record?.id ? `<a class="button secondary" href="${routeHref(`/admin/master-data/${entity}`)}">Cancel</a>` : ""}
+      </div>
+    </form>
+  `;
+}
+
+function renderMasterTable(entity, records, query) {
+  if (!records.length) {
+    const config = getMasterEntityConfig(entity);
+    return emptyState(`No ${config.label.toLowerCase()} found`, "Try changing the filter or add a new record.");
+  }
+
+  if (entity === "locations") {
+    return `
+      <div class="table-shell">
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Code</th>
+                <th>Location</th>
+                <th>Branch</th>
+                <th>Floor / Area</th>
+                <th>Record State</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${records
+                .map(
+                  (record) => `
+                    <tr>
+                      <td>${escapeHtml(record.code)}</td>
+                      <td><strong>${escapeHtml(record.name)}</strong></td>
+                      <td>${escapeHtml(record.branches?.name ?? "No branch")}</td>
+                      <td>${escapeHtml(record.floor_label ?? "Not set")}</td>
+                      <td>${renderBadge(record.is_active ? "Active" : "Archived", record.is_active ? "active" : "archived")}</td>
+                      <td>
+                        <div class="table-actions">
+                          <a class="ghost-button table-action" href="${routeHref(`/admin/master-data/${entity}`, { ...query, edit: record.id })}">Edit</a>
+                          ${
+                            record.is_active
+                              ? `<button class="ghost-button table-action" data-action="archive-master-record" data-entity="${escapeHtml(entity)}" data-record-id="${escapeHtml(record.id)}" data-record-label="${escapeHtml(record.name)}">Archive</button>`
+                              : `<button class="ghost-button table-action success" data-action="restore-master-record" data-entity="${escapeHtml(entity)}" data-record-id="${escapeHtml(record.id)}" data-record-label="${escapeHtml(record.name)}">Restore</button>`
+                          }
+                          <button class="ghost-button table-action danger" data-action="delete-master-record" data-entity="${escapeHtml(entity)}" data-record-id="${escapeHtml(record.id)}" data-record-label="${escapeHtml(record.name)}">Delete</button>
+                        </div>
+                      </td>
+                    </tr>
+                  `,
+                )
+                .join("")}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+  }
+
+  return `
+    <div class="table-shell">
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Code</th>
+              <th>Name</th>
+              ${entity === "device-types" ? "<th>Description</th>" : ""}
+              <th>Record State</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${records
+              .map(
+                (record) => `
+                  <tr>
+                    <td>${escapeHtml(record.code)}</td>
+                    <td><strong>${escapeHtml(record.name)}</strong></td>
+                    ${
+                      entity === "device-types"
+                        ? `<td>${escapeHtml(record.description ?? "No description")}</td>`
+                        : ""
+                    }
+                    <td>${renderBadge(record.is_active ? "Active" : "Archived", record.is_active ? "active" : "archived")}</td>
+                    <td>
+                      <div class="table-actions">
+                        <a class="ghost-button table-action" href="${routeHref(`/admin/master-data/${entity}`, { ...query, edit: record.id })}">Edit</a>
+                        ${
+                          record.is_active
+                            ? `<button class="ghost-button table-action" data-action="archive-master-record" data-entity="${escapeHtml(entity)}" data-record-id="${escapeHtml(record.id)}" data-record-label="${escapeHtml(record.name)}">Archive</button>`
+                            : `<button class="ghost-button table-action success" data-action="restore-master-record" data-entity="${escapeHtml(entity)}" data-record-id="${escapeHtml(record.id)}" data-record-label="${escapeHtml(record.name)}">Restore</button>`
+                        }
+                        <button class="ghost-button table-action danger" data-action="delete-master-record" data-entity="${escapeHtml(entity)}" data-record-id="${escapeHtml(record.id)}" data-record-label="${escapeHtml(record.name)}">Delete</button>
+                      </div>
+                    </td>
+                  </tr>
+                `,
+              )
+              .join("")}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+}
+
+async function renderAdminMasterDataPage(entity, query) {
+  const page = Number(query.page ?? 1) || 1;
+  const visibility = query.visibility || "active";
+  const config = getMasterEntityConfig(entity);
+
+  try {
+    const [lookups, result, editingRecord] = await Promise.all([
+      getLookupData(),
+      getMasterDataRecords(entity, { page, search: query.q, visibility }),
+      query.edit ? getMasterRecord(entity, query.edit) : Promise.resolve(null),
+    ]);
+
+    const totalPages = Math.max(1, Math.ceil(result.total / ADMIN_PAGE_SIZE));
+
+    return shell(`
+      <section class="page-grid">
+        <section class="panel">
+          <div class="panel-pad section-block">
+            <div class="section-head">
+              <div>
+                <p class="eyebrow">Master Data</p>
+                <h2 class="section-title">${escapeHtml(config.label)}</h2>
+                <p class="section-copy">Maintain active and archived master records used across device forms, filters, transfers, and reporting.</p>
+              </div>
+            </div>
+            ${renderMasterTabs(entity)}
+          </div>
+        </section>
+
+        <section class="master-grid">
+          <section class="panel form-shell">
+            <div class="panel-pad section-block">
+              <div>
+                <p class="eyebrow">${escapeHtml(config.singular)}</p>
+                <h3 class="panel-title">${escapeHtml(editingRecord ? `Edit ${config.singular}` : `Add ${config.singular}`)}</h3>
+                <p class="section-subtitle">Archive records instead of deleting them. Delete is only allowed when the record has no dependencies.</p>
+              </div>
+              ${renderMasterForm(entity, editingRecord, lookups)}
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-pad section-block">
+              <div class="section-head">
+                <div>
+                  <p class="eyebrow">Records</p>
+                  <h3 class="panel-title">${escapeHtml(config.label)}</h3>
+                </div>
+                <span class="pill-count">${escapeHtml(String(result.total))}</span>
+              </div>
+
+              <div class="chip-row">
+                <a href="${routeHref(`/admin/master-data/${entity}`, { ...query, page: 1, visibility: "active" })}" class="chip ${visibility === "active" ? "active" : ""}">Active</a>
+                <a href="${routeHref(`/admin/master-data/${entity}`, { ...query, page: 1, visibility: "archived" })}" class="chip ${visibility === "archived" ? "active" : ""}">Archived</a>
+                <a href="${routeHref(`/admin/master-data/${entity}`, { ...query, page: 1, visibility: "all" })}" class="chip ${visibility === "all" ? "active" : ""}">All</a>
+              </div>
+
+              <div class="filter-shell">
+                <div class="field">
+                  <label for="master-search">Search ${escapeHtml(config.label)}</label>
+                  <input class="input" id="master-search" data-search-route="/admin/master-data/${entity}" data-preserve="visibility" type="search" value="${escapeHtml(query.q ?? "")}" placeholder="Search by code or name" />
+                </div>
+              </div>
+
+              ${renderMasterTable(entity, result.data, query)}
+              <p class="dependency-note">Delete is blocked when a record is still referenced by device records, transfer records, or related master records.</p>
+              ${renderPagination(`/admin/master-data/${entity}`, { ...query, visibility }, result.page, totalPages)}
+            </div>
+          </section>
+        </section>
+      </section>
+    `);
+  } catch (error) {
+    return shell(`
+      <section class="panel">
+        <div class="panel-pad">
+          ${emptyState(
+            "Master Data setup required",
+            error.message || "Run the latest Supabase migration to enable Master Data management.",
+            `<a class="button secondary" href="${routeHref("/admin/dashboard")}">Back to Dashboard</a>`,
+          )}
+        </div>
+      </section>
+    `);
+  }
+}
+
 async function resolveRoute() {
   const route = getRoute();
   const deviceRoute = parseDeviceRoute(route.path);
   const adminDeviceRoute = parseAdminDeviceRoute(route.path);
   const adminRepairRoute = parseAdminRepairRoute(route.path);
+  const adminMasterDataRoute = parseAdminMasterDataRoute(route.path);
 
   if (route.path === "/") {
     return renderHomePage();
@@ -3082,6 +4497,14 @@ async function resolveRoute() {
       return null;
     }
     return renderAdminTransfersPage(route.query);
+  }
+
+  if (adminMasterDataRoute) {
+    if (!isAdmin()) {
+      requireAdminRoute(route.path, route.query);
+      return null;
+    }
+    return renderAdminMasterDataPage(adminMasterDataRoute.entity, route.query);
   }
 
   if (route.path === "/admin/history") {
@@ -3153,19 +4576,24 @@ function bindFilterSelects() {
     select.addEventListener("change", () => {
       const { query } = getRoute();
       const nextQuery = {};
+      const filterKey = select.getAttribute("data-filter-key") || "status";
       const preserve = String(select.getAttribute("data-preserve") || "")
+        .split(",")
+        .map((value) => value.trim())
+        .filter(Boolean);
+      const resetKeys = String(select.getAttribute("data-reset-keys") || "")
         .split(",")
         .map((value) => value.trim())
         .filter(Boolean);
 
       preserve.forEach((key) => {
-        if (query[key]) {
+        if (query[key] && !resetKeys.includes(key)) {
           nextQuery[key] = query[key];
         }
       });
 
       if (select.value) {
-        nextQuery.status = select.value;
+        nextQuery[filterKey] = select.value;
       }
 
       nextQuery.page = 1;
@@ -3277,6 +4705,34 @@ async function handleDeviceFormSubmit(event) {
   }
 }
 
+async function handleMasterDataFormSubmit(event) {
+  event.preventDefault();
+  const formData = new FormData(event.currentTarget);
+  const entity = normalizeMasterEntity(String(formData.get("entity") || "device-types"));
+  const config = getMasterEntityConfig(entity);
+  const payload = {
+    id: toNullable(formData.get("recordId")),
+    code: String(formData.get("code") || ""),
+    name: String(formData.get("name") || ""),
+    description: toNullable(formData.get("description")),
+    branch_id: toNullable(formData.get("branch_id")),
+    floor_label: toNullable(formData.get("floor_label")),
+  };
+  const button = event.currentTarget.querySelector("button[type='submit']");
+  button.disabled = true;
+  button.textContent = payload.id ? "Saving..." : "Adding...";
+
+  try {
+    await saveMasterRecord(entity, payload);
+    toast(`${config.singular} saved.`, "success");
+    go(`/admin/master-data/${entity}`, { visibility: getRoute().query.visibility || "active" });
+  } catch (error) {
+    toast(error.message || `Unable to save ${config.singular.toLowerCase()}.`, "error");
+    button.disabled = false;
+    button.textContent = payload.id ? "Save Changes" : `Add ${config.singular}`;
+  }
+}
+
 async function handleRepairFormSubmit(event) {
   event.preventDefault();
   const formData = new FormData(event.currentTarget);
@@ -3309,7 +4765,7 @@ async function handleRepairFormSubmit(event) {
   } catch (error) {
     toast(error.message || "Unable to submit repair request.", "error");
     button.disabled = false;
-    button.textContent = "Request Repair";
+    button.textContent = "Submit Repair Request";
   }
 }
 
@@ -3377,6 +4833,10 @@ async function handleExportDevices() {
       search: query.q,
       status: query.status,
       visibility: query.visibility || "all",
+      deviceType: query.deviceType,
+      branchId: query.branchId,
+      departmentId: query.departmentId,
+      locationId: query.locationId,
     });
 
     const rows = [
@@ -3427,7 +4887,7 @@ async function handleExportDevices() {
     URL.revokeObjectURL(url);
     toast("CSV generated.", "success");
   } catch (error) {
-    toast(error.message || "Unable to devices.", "error");
+    toast(error.message || "Unable to export devices.", "error");
   }
 }
 
@@ -3521,6 +4981,10 @@ async function handleAction(event) {
   }
 
   if (action === "archive-device") {
+    if (!window.confirm("Archive this device record? It will be hidden from the public QR page until restored.")) {
+      return;
+    }
+
     try {
       await archiveDevice(target.getAttribute("data-device-id"), state.user.id);
       toast("Device archived.", "success");
@@ -3532,6 +4996,10 @@ async function handleAction(event) {
   }
 
   if (action === "restore-device") {
+    if (!window.confirm("Restore this device record to active inventory?")) {
+      return;
+    }
+
     try {
       await restoreDevice(target.getAttribute("data-device-id"), state.user.id);
       toast("Device restored.", "success");
@@ -3544,6 +5012,77 @@ async function handleAction(event) {
 
   if (action === "export-devices") {
     await handleExportDevices();
+    return;
+  }
+
+  if (action === "archive-master-record") {
+    const entity = normalizeMasterEntity(target.getAttribute("data-entity"));
+    const label = target.getAttribute("data-record-label") || "this record";
+
+    if (!window.confirm(`Archive ${label}? It will stay recoverable for future use.`)) {
+      return;
+    }
+
+    try {
+      await setMasterRecordActive(entity, target.getAttribute("data-record-id"), false);
+      toast(`${getMasterEntityConfig(entity).singular} archived.`, "success");
+      renderRoute();
+    } catch (error) {
+      toast(error.message || "Unable to archive record.", "error");
+    }
+    return;
+  }
+
+  if (action === "restore-master-record") {
+    const entity = normalizeMasterEntity(target.getAttribute("data-entity"));
+    const label = target.getAttribute("data-record-label") || "this record";
+
+    if (!window.confirm(`Restore ${label} to active master data?`)) {
+      return;
+    }
+
+    try {
+      await setMasterRecordActive(entity, target.getAttribute("data-record-id"), true);
+      toast(`${getMasterEntityConfig(entity).singular} restored.`, "success");
+      renderRoute();
+    } catch (error) {
+      toast(error.message || "Unable to restore record.", "error");
+    }
+    return;
+  }
+
+  if (action === "delete-master-record") {
+    const entity = normalizeMasterEntity(target.getAttribute("data-entity"));
+    const recordId = target.getAttribute("data-record-id");
+    const label = target.getAttribute("data-record-label") || "this record";
+
+    try {
+      const record = await getMasterRecord(entity, recordId);
+      if (!record) {
+        toast("Record not found.", "error");
+        return;
+      }
+
+      const usage = await getMasterRecordUsage(entity, record);
+      if (usage.total > 0) {
+        const summary = usage.entries
+          .filter((entry) => entry.total > 0)
+          .map((entry) => `${entry.label}: ${entry.total}`)
+          .join(" | ");
+        toast(`Delete blocked. Dependencies found for ${label}. ${summary}`, "error");
+        return;
+      }
+
+      if (!window.confirm(`Delete ${label}? This action cannot be undone.`)) {
+        return;
+      }
+
+      await deleteMasterRecord(entity, recordId);
+      toast(`${getMasterEntityConfig(entity).singular} deleted.`, "success");
+      renderRoute();
+    } catch (error) {
+      toast(error.message || "Unable to delete record.", "error");
+    }
     return;
   }
 
@@ -3662,6 +5201,7 @@ function showQrPreviewError(message) {
 async function bindRouteForms() {
   document.querySelector("#admin-login-form")?.addEventListener("submit", handleAdminLoginSubmit);
   document.querySelector("#device-form")?.addEventListener("submit", handleDeviceFormSubmit);
+  document.querySelector("#master-data-form")?.addEventListener("submit", handleMasterDataFormSubmit);
   document.querySelector("#repair-form")?.addEventListener("submit", handleRepairFormSubmit);
   document.querySelector("#repair-update-form")?.addEventListener("submit", handleRepairUpdateSubmit);
   document.querySelector("#transfer-form")?.addEventListener("submit", handleTransferSubmit);
@@ -3680,6 +5220,13 @@ async function bindRouteForms() {
     transferBranchSelect.addEventListener("change", () =>
       syncLocationOptions(transferBranchSelect, transferLocationSelect),
     );
+  }
+
+  const filterBranchSelect = document.querySelector("#device-branch-filter");
+  const filterLocationSelect = document.querySelector("#device-location-filter");
+  if (filterBranchSelect && filterLocationSelect) {
+    syncLocationOptions(filterBranchSelect, filterLocationSelect);
+    filterBranchSelect.addEventListener("change", () => syncLocationOptions(filterBranchSelect, filterLocationSelect));
   }
 
   const assetCodeInput = document.querySelector("#asset_code");
