@@ -2842,6 +2842,23 @@ function renderHistoryBadge(action) {
   return `<span class="${historyBadgeStyles[action] ?? "badge slate"}">${escapeHtml(action)}</span>`;
 }
 
+function getRepairStatusBadgeType(status) {
+  switch (status) {
+    case "Completed":
+      return "active";
+    case "Pending":
+      return "amber";
+    case "Approved":
+      return "info";
+    case "In Progress":
+      return "slate";
+    case "Rejected":
+      return "rose";
+    default:
+      return "rose";
+  }
+}
+
 function renderKpiCard(label, value, caption) {
   return `
     <div class="kpi-card">
@@ -3923,7 +3940,7 @@ function renderPublicActivityCards(historyItems, transferItems, repairItems, slu
             <div class="timeline-card">
               <div class="split">
                 <div class="chip-row">
-                  ${renderBadge(item.status, "rose")}
+                  ${renderBadge(item.status, getRepairStatusBadgeType(item.status))}
                   ${renderBadge(item.priority, "amber")}
                 </div>
                 <span class="muted">${escapeHtml(formatDateTime(item.requested_at))}</span>
@@ -4174,7 +4191,7 @@ async function renderAdminRepairsPage(query) {
                               <td><strong>${escapeHtml(repair.devices?.asset_code ?? "")} · ${escapeHtml(repair.devices?.device_name ?? "")}</strong></td>
                               <td>${escapeHtml(repair.requester_name)}<div class="muted">${escapeHtml(repair.department ?? "No department")}</div></td>
                               <td>${renderBadge(repair.priority, "amber")}</td>
-                              <td>${renderBadge(repair.status, "rose")}</td>
+                              <td>${renderBadge(repair.status, getRepairStatusBadgeType(repair.status))}</td>
                               <td>${escapeHtml(formatDateTime(repair.requested_at))}</td>
                               <td><a class="tiny-link" href="${routeHref(`/admin/repairs/${encodeURIComponent(repair.id)}`)}">Review</a></td>
                             </tr>
@@ -5268,7 +5285,7 @@ async function appendPublicItems(type, slug, offset) {
           <div class="timeline-card">
             <div class="split">
               <div class="chip-row">
-                ${renderBadge(item.status, "rose")}
+                ${renderBadge(item.status, getRepairStatusBadgeType(item.status))}
                 ${renderBadge(item.priority, "amber")}
               </div>
               <span class="muted">${escapeHtml(formatDateTime(item.requested_at))}</span>
