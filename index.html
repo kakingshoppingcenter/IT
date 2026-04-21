@@ -692,6 +692,20 @@ tbody tr:hover {
   gap: 12px;
 }
 
+.url-block {
+  display: block;
+  margin-top: 6px;
+  color: var(--muted-strong);
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 0.84rem;
+  line-height: 1.6;
+  word-break: break-all;
+}
+
+.url-cell {
+  min-width: 280px;
+}
+
 .detail-list p,
 .helper-list p,
 .timeline-card p {
@@ -1368,6 +1382,11 @@ function absoluteHashUrl(path, query = {}) {
   return `${window.location.origin}${basePath}/${hash}`;
 }
 
+function buildDevicePublicUrl(qrSlug) {
+  const slug = String(qrSlug ?? "").trim();
+  return slug ? absoluteHashUrl(`/device/${encodeURIComponent(slug)}`) : "";
+}
+
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
   auth: {
@@ -1406,7 +1425,7 @@ function applyDeviceFilters(query, { search, status, visibility, deviceType, bra
   if (search) {
     const keyword = escapeLikeValue(search.trim());
     nextQuery = nextQuery.or(
-      `asset_code.ilike.%${keyword}%,device_name.ilike.%${keyword}%,serial_number.ilike.%${keyword}%`,
+      `asset_code.ilike.%${keyword}%,device_name.ilike.%${keyword}%,serial_number.ilike.%${keyword}%,qr_slug.ilike.%${keyword}%`,
     );
   }
 
@@ -1747,6 +1766,33 @@ async function getDevices(options = {}) {
       "id, asset_code, device_name, device_type, status, assigned_to, qr_slug, date_acquired, updated_at, is_active, department_id, branch_id, location_id, departments(name), branches(name), locations(name)",
       { count: "exact" },
     );
+
+  query = applyDeviceFilters(query, options)
+    .order("updated_at", { ascending: false })
+    .range(from, to);
+
+  const { data, count, error } = await query;
+
+  if (error) {
+    throw error;
+  }
+
+  return {
+    data: data ?? [],
+    total: count ?? 0,
+    page,
+    pageSize: ADMIN_PAGE_SIZE,
+  };
+}
+
+async function getPublicUrlList(options = {}) {
+  const page = Math.max(1, Number(options.page ?? 1) || 1);
+  const from = (page - 1) * ADMIN_PAGE_SIZE;
+  const to = from + ADMIN_PAGE_SIZE - 1;
+
+  let query = supabase
+    .from("devices")
+    .select("id, asset_code, device_name, device_type, qr_slug, status, is_active, updated_at", { count: "exact" });
 
   query = applyDeviceFilters(query, options)
     .order("updated_at", { ascending: false })
@@ -2645,6 +2691,35 @@ function toast(message, type = "info") {
   }, 3200);
 }
 
+async function copyText(text) {
+  const value = String(text ?? "").trim();
+  if (!value) {
+    throw new Error("No public URL is available to copy yet.");
+  }
+
+  if (navigator.clipboard?.writeText) {
+    await navigator.clipboard.writeText(value);
+    return;
+  }
+
+  const fallback = document.createElement("textarea");
+  fallback.value = value;
+  fallback.setAttribute("readonly", "readonly");
+  fallback.style.position = "fixed";
+  fallback.style.opacity = "0";
+  fallback.style.pointerEvents = "none";
+  document.body.appendChild(fallback);
+  fallback.focus();
+  fallback.select();
+
+  const copied = document.execCommand("copy");
+  document.body.removeChild(fallback);
+
+  if (!copied) {
+    throw new Error("Copy is not available in this browser.");
+  }
+}
+
 function renderToasts() {
   const overlay = document.querySelector("[data-toast-root]");
   if (!overlay) return;
@@ -2665,12 +2740,13 @@ function shell(mainContent, options = {}) {
   const showAdminNav = isAdmin();
   const isAdminLogin = route.path === "/admin/login";
   const navLinks = showAdminNav
-    ? [
-        ["/admin/dashboard", "Dashboard"],
-        ["/admin/devices", "Device Management"],
-        ["/admin/repairs", "Repair Management"],
-        ["/admin/transfers", "Transfer Management"],
-        ["/admin/master-data", "Master Data"],
+      ? [
+          ["/admin/dashboard", "Dashboard"],
+          ["/admin/devices", "Device Management"],
+          ["/admin/public-urls", "Public URLs"],
+          ["/admin/repairs", "Repair Management"],
+          ["/admin/transfers", "Transfer Management"],
+          ["/admin/master-data", "Master Data"],
         ["/admin/history", "System Records"],
       ]
     : [];
@@ -3275,8 +3351,10 @@ async function renderAdminDashboardPage() {
 
 function renderDeviceTableRows(devices) {
   return devices
-    .map(
-      (device) => `
+    .map((device) => {
+      const publicUrl = buildDevicePublicUrl(device.qr_slug);
+
+      return `
         <tr>
           <td>
             <strong class="table-card-title">${escapeHtml(device.device_name)}</strong>
@@ -3297,6 +3375,11 @@ function renderDeviceTableRows(devices) {
             <div class="table-actions">
               <a class="ghost-button table-action" href="${routeHref(`/admin/devices/${encodeURIComponent(device.id)}/edit`)}">Edit</a>
               ${
+                publicUrl
+                  ? `<button class="ghost-button table-action" data-action="copy-public-url" data-public-url="${escapeHtml(publicUrl)}">Copy URL</button>`
+                  : ""
+              }
+              ${
                 device.is_active
                   ? `
                     <a class="ghost-button table-action" href="${routeHref(`/device/${encodeURIComponent(device.qr_slug)}`)}">QR Page</a>
@@ -3313,9 +3396,140 @@ function renderDeviceTableRows(devices) {
             </div>
           </td>
         </tr>
-      `,
-    )
+      `;
+    })
     .join("");
+}
+
+function renderPublicUrlTableRows(devices) {
+  return devices
+    .map((device) => {
+      const publicUrl = buildDevicePublicUrl(device.qr_slug);
+
+      return `
+        <tr>
+          <td>
+            <strong class="table-card-title">${escapeHtml(device.asset_code)}</strong>
+            <div class="muted">${escapeHtml(device.device_name)}</div>
+            <div class="muted">${escapeHtml(device.qr_slug || "No QR slug")}</div>
+          </td>
+          <td>${escapeHtml(device.device_type || "Unassigned")}</td>
+          <td>${renderBadge(device.status, device.status === "In Repair" ? "rose" : "info")}</td>
+          <td>${device.is_active ? renderBadge("Active", "success") : renderBadge("Archived", "archived")}</td>
+          <td class="url-cell">
+            ${
+              publicUrl
+                ? `<span class="url-block">${escapeHtml(publicUrl)}</span>`
+                : `<span class="muted">No public URL available.</span>`
+            }
+          </td>
+          <td>
+            <div class="table-actions">
+              ${
+                publicUrl
+                  ? `<button class="ghost-button table-action" data-action="copy-public-url" data-public-url="${escapeHtml(publicUrl)}">Copy URL</button>`
+                  : ""
+              }
+              ${
+                device.is_active && publicUrl
+                  ? `<a class="ghost-button table-action" href="${routeHref(`/device/${encodeURIComponent(device.qr_slug)}`)}">Open</a>`
+                  : ""
+              }
+              <a class="ghost-button table-action" href="${routeHref(`/admin/devices/${encodeURIComponent(device.id)}/edit`)}">Edit</a>
+            </div>
+          </td>
+        </tr>
+      `;
+    })
+    .join("");
+}
+
+async function renderAdminPublicUrlsPage(query) {
+  const page = Number(query.page ?? 1) || 1;
+  const visibility = query.visibility || "all";
+  const result = await getPublicUrlList({
+    page,
+    search: query.q,
+    status: query.status,
+    visibility,
+  });
+  const totalPages = Math.max(1, Math.ceil(result.total / ADMIN_PAGE_SIZE));
+
+  return shell(`
+    <section class="page-grid">
+      <section class="panel">
+        <div class="panel-pad">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Public URLs</p>
+              <h2 class="section-title">Device public access links</h2>
+              <p class="section-copy">Review every QR device URL in one paginated table, then copy or open the public page directly.</p>
+            </div>
+            <div class="page-actions">
+              <a class="button secondary" href="${routeHref("/admin/devices")}">Open Device Management</a>
+            </div>
+          </div>
+
+          <div class="chip-row" style="margin-top: 20px;">
+            <a href="${routeHref("/admin/public-urls", { ...query, page: 1, visibility: "all" })}" class="chip ${visibility === "all" ? "active" : ""}">All URLs</a>
+            <a href="${routeHref("/admin/public-urls", { ...query, page: 1, visibility: "active" })}" class="chip ${visibility === "active" ? "active" : ""}">Active</a>
+            <a href="${routeHref("/admin/public-urls", { ...query, page: 1, visibility: "archived" })}" class="chip ${visibility === "archived" ? "active" : ""}">Archived</a>
+          </div>
+
+          <div class="filter-shell" style="margin-top: 18px;">
+            <div class="filter-row">
+              <div class="field" style="min-width: min(360px, 100%); flex: 1;">
+                <label for="public-url-search">Search Public URLs</label>
+                <input class="input" id="public-url-search" data-search-route="/admin/public-urls" data-preserve="status,visibility" type="search" value="${escapeHtml(query.q ?? "")}" placeholder="Asset code, device name, serial number, or QR slug" />
+              </div>
+              <div class="field" style="min-width: 220px;">
+                <label for="public-url-status-filter">Status</label>
+                <select class="select" id="public-url-status-filter" data-filter-route="/admin/public-urls" data-filter-key="status" data-preserve="q,visibility">
+                  <option value="">All statuses</option>
+                  ${deviceStatuses
+                    .map(
+                      (status) =>
+                        `<option value="${escapeHtml(status)}" ${query.status === status ? "selected" : ""}>${escapeHtml(status)}</option>`,
+                    )
+                    .join("")}
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="alert info" style="margin-top: 18px;">
+            Active device URLs open public device pages directly. Archived device URLs remain listed for records and become visible again when the device is restored.
+          </div>
+
+          <div class="table-shell" style="margin-top: 20px;">
+            <div class="table-scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Asset</th>
+                    <th>Type</th>
+                    <th>Status</th>
+                    <th>Visibility</th>
+                    <th>Public URL</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${
+                    result.data.length
+                      ? renderPublicUrlTableRows(result.data)
+                      : `<tr><td colspan="6">${emptyState("No public URLs matched", "Try changing filters or create devices with QR slugs.")}</td></tr>`
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          ${renderPagination("/admin/public-urls", { ...query, visibility }, result.page, totalPages)}
+        </div>
+      </section>
+    </section>
+  `);
 }
 
 async function renderAdminDevicesPage(query) {
@@ -3348,6 +3562,7 @@ async function renderAdminDevicesPage(query) {
             </div>
             <div class="page-actions">
               <button class="button secondary" data-action="export-devices">CSV</button>
+              <a class="button secondary" href="${routeHref("/admin/public-urls")}">Public URLs</a>
               <a class="button primary" href="${routeHref("/admin/devices/new")}">Add Device</a>
             </div>
           </div>
@@ -3632,9 +3847,10 @@ function renderDeviceForm(device, lookups, qrUrl) {
             </p>
           </div>
           <div class="helper-list" style="margin-top: 18px;">
-            <p><strong>Public URL:</strong> <span id="device-qr-public-url" class="muted">${escapeHtml(previewUrl)}</span></p>
+            <p><strong>Public URL:</strong> <span id="device-qr-public-url" class="url-block">${escapeHtml(previewUrl)}</span></p>
             <div class="action-row">
               <button class="button secondary" type="button" data-action="print-qr" ${hasPreview ? "" : "disabled"}>Print QR</button>
+              <button id="device-copy-public-url" class="button secondary" type="button" data-action="copy-public-url" data-public-url="${hasPreview ? escapeHtml(previewUrl) : ""}" ${hasPreview ? "" : "disabled"}>Copy Public URL</button>
               <a id="device-preview-link" class="button secondary ${hasPreview ? "" : "is-disabled"}" href="${previewLink}">Preview Public Page</a>
             </div>
           </div>
@@ -3659,7 +3875,7 @@ async function renderAdminDeviceFormPage(id) {
   }
 
   const slugSource = device?.qr_slug || slugify(device?.asset_code || "");
-  const qrUrl = slugSource ? absoluteHashUrl(`/device/${slugSource}`) : "";
+  const qrUrl = buildDevicePublicUrl(slugSource);
 
   return shell(renderDeviceForm(device, lookups, qrUrl));
 }
@@ -3898,7 +4114,7 @@ async function renderPublicEditPage(slug) {
     `);
   }
 
-  return shell(renderDeviceForm(device, lookups, absoluteHashUrl(`/device/${device.qr_slug}`)));
+  return shell(renderDeviceForm(device, lookups, buildDevicePublicUrl(device.qr_slug)));
 }
 
 async function renderAdminRepairsPage(query) {
@@ -4572,6 +4788,14 @@ async function resolveRoute() {
     return renderAdminDevicesPage(route.query);
   }
 
+  if (route.path === "/admin/public-urls") {
+    if (!isAdmin()) {
+      requireAdminRoute(route.path, route.query);
+      return null;
+    }
+    return renderAdminPublicUrlsPage(route.query);
+  }
+
   if (adminDeviceRoute) {
     if (!isAdmin()) {
       requireAdminRoute(route.path, route.query);
@@ -5073,6 +5297,16 @@ async function handleAction(event) {
 
   const action = target.getAttribute("data-action");
 
+  if (action === "copy-public-url") {
+    try {
+      await copyText(target.getAttribute("data-public-url"));
+      toast("Public URL copied.", "success");
+    } catch (error) {
+      toast(error.message || "Unable to copy public URL.", "error");
+    }
+    return;
+  }
+
   if (action === "sign-out") {
     try {
       await signOutAdmin();
@@ -5306,7 +5540,8 @@ function syncQrPreviewMeta(slug) {
   const publicUrl = document.getElementById("device-qr-public-url");
   const previewLink = document.getElementById("device-preview-link");
   const printButton = document.querySelector("[data-action='print-qr']");
-  const url = slug ? absoluteHashUrl(`/device/${slug}`) : "";
+  const copyButton = document.getElementById("device-copy-public-url");
+  const url = buildDevicePublicUrl(slug);
 
   if (canvas) {
     canvas.classList.toggle("hidden", !slug);
@@ -5331,12 +5566,18 @@ function syncQrPreviewMeta(slug) {
   if (printButton) {
     printButton.disabled = !slug;
   }
+
+  if (copyButton) {
+    copyButton.disabled = !url;
+    copyButton.setAttribute("data-public-url", url);
+  }
 }
 
 function showQrPreviewError(message) {
   const canvas = document.getElementById("device-qr-canvas");
   const placeholder = document.getElementById("device-qr-placeholder");
   const printButton = document.querySelector("[data-action='print-qr']");
+  const copyButton = document.getElementById("device-copy-public-url");
 
   if (canvas) {
     canvas.classList.add("hidden");
@@ -5349,6 +5590,11 @@ function showQrPreviewError(message) {
 
   if (printButton) {
     printButton.disabled = true;
+  }
+
+  if (copyButton) {
+    copyButton.disabled = true;
+    copyButton.setAttribute("data-public-url", "");
   }
 }
 
@@ -5407,7 +5653,7 @@ async function renderQrCanvas() {
   syncQrPreviewMeta(slug);
   if (!slug) return;
 
-  const url = absoluteHashUrl(`/device/${slug}`);
+  const url = buildDevicePublicUrl(slug);
   canvas.classList.remove("hidden");
 
   try {
