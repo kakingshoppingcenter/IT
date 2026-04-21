@@ -157,7 +157,9 @@ code {
 .eyebrow {
   display: inline-flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 10px;
+  max-width: 100%;
   margin: 0;
   padding: 8px 14px;
   border-radius: 999px;
@@ -887,7 +889,8 @@ tbody tr:hover {
 }
 
 .dashboard-middle {
-  grid-template-columns: minmax(0, 1.4fr) minmax(320px, 0.75fr);
+  grid-template-columns: minmax(0, 1.32fr) minmax(340px, 0.92fr);
+  align-items: start;
 }
 
 .dashboard-bottom {
@@ -899,7 +902,8 @@ tbody tr:hover {
 }
 
 .utility-grid {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: 1fr;
+  align-content: start;
 }
 
 .kpi-card {
@@ -982,6 +986,7 @@ tbody tr:hover {
 .summary-table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed;
 }
 
 .summary-table td,
@@ -997,16 +1002,23 @@ tbody tr:hover {
 
 .summary-table th {
   text-align: left;
+  padding-right: 14px;
   color: var(--muted-strong);
   font-size: 0.88rem;
   font-weight: 700;
   letter-spacing: normal;
   text-transform: none;
+  overflow-wrap: anywhere;
 }
 
 .summary-table td:last-child,
 .summary-table th:last-child {
   text-align: right;
+}
+
+.summary-table td:last-child {
+  width: 88px;
+  white-space: nowrap;
 }
 
 .metric-table {
@@ -1206,6 +1218,15 @@ tbody tr:hover {
   background: #eff6ff;
   color: #1d4ed8;
   font-weight: 800;
+}
+
+.utility-grid .panel-title {
+  font-size: 1.18rem;
+  line-height: 1.25;
+}
+
+.utility-grid > .panel {
+  align-self: start;
 }
 
 @keyframes spin {
