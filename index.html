@@ -10,32 +10,34 @@
     />
     <style>
 :root {
-  color-scheme: dark;
-  --bg-0: #07101e;
-  --bg-1: #091427;
-  --bg-2: #0b1d39;
-  --panel: rgba(9, 20, 40, 0.78);
-  --panel-strong: rgba(7, 15, 30, 0.92);
-  --panel-soft: rgba(255, 255, 255, 0.05);
-  --line: rgba(132, 177, 255, 0.18);
-  --line-strong: rgba(132, 177, 255, 0.28);
-  --text: #f3f7ff;
-  --muted: #a8b9d3;
-  --muted-strong: #d7e4ff;
-  --blue: #1877f2;
-  --blue-strong: #0f5ecb;
-  --cyan: #4ce2ff;
-  --sky: #b8e7ff;
-  --emerald: #6ee7b7;
-  --rose: #fb7185;
-  --amber: #fbbf24;
-  --shadow: 0 24px 64px rgba(2, 8, 23, 0.32);
-  --shadow-soft: 0 16px 34px rgba(2, 8, 23, 0.18);
-  --radius-xl: 30px;
-  --radius-lg: 24px;
-  --radius-md: 18px;
-  --radius-sm: 14px;
-  --content-width: 1240px;
+  color-scheme: light;
+  --bg-0: #eef4fb;
+  --bg-1: #f5f8fc;
+  --bg-2: #ffffff;
+  --panel: rgba(255, 255, 255, 0.96);
+  --panel-strong: #ffffff;
+  --panel-soft: #f8fbff;
+  --panel-muted: #f2f6fc;
+  --line: #d7e2ef;
+  --line-strong: #c1d0e3;
+  --text: #142033;
+  --text-strong: #0b1728;
+  --muted: #5d6b82;
+  --muted-strong: #334155;
+  --blue: #2563eb;
+  --blue-strong: #1d4ed8;
+  --cyan: #0ea5e9;
+  --sky: #eff6ff;
+  --emerald: #059669;
+  --rose: #dc2626;
+  --amber: #d97706;
+  --shadow: 0 24px 48px rgba(15, 23, 42, 0.08);
+  --shadow-soft: 0 12px 24px rgba(15, 23, 42, 0.06);
+  --radius-xl: 28px;
+  --radius-lg: 20px;
+  --radius-md: 16px;
+  --radius-sm: 12px;
+  --content-width: 1280px;
 }
 
 * {
@@ -44,6 +46,7 @@
 
 html {
   scroll-behavior: smooth;
+  background: var(--bg-1);
 }
 
 body {
@@ -52,10 +55,9 @@ body {
   font-family: "Segoe UI", "Inter", system-ui, sans-serif;
   color: var(--text);
   background:
-    radial-gradient(circle at 12% 10%, rgba(24, 119, 242, 0.24), transparent 22%),
-    radial-gradient(circle at 88% 12%, rgba(76, 226, 255, 0.16), transparent 19%),
-    radial-gradient(circle at 74% 76%, rgba(24, 119, 242, 0.18), transparent 24%),
-    linear-gradient(160deg, var(--bg-0) 0%, var(--bg-1) 48%, #06111f 100%);
+    radial-gradient(circle at top left, rgba(37, 99, 235, 0.1), transparent 28%),
+    radial-gradient(circle at top right, rgba(14, 165, 233, 0.08), transparent 24%),
+    linear-gradient(180deg, var(--bg-0) 0%, var(--bg-1) 36%, #f7f9fc 100%);
   overflow-x: hidden;
 }
 
@@ -63,12 +65,20 @@ body::before {
   content: "";
   position: fixed;
   inset: 0;
+  z-index: -2;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.66), rgba(255, 255, 255, 0));
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
   z-index: -1;
   background-image:
-    linear-gradient(rgba(132, 177, 255, 0.06) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(132, 177, 255, 0.06) 1px, transparent 1px);
-  background-size: 86px 86px;
-  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.84), transparent 90%);
+    linear-gradient(rgba(37, 99, 235, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(37, 99, 235, 0.035) 1px, transparent 1px);
+  background-size: 120px 120px;
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.35), transparent 78%);
 }
 
 a {
@@ -87,20 +97,30 @@ button {
   cursor: pointer;
 }
 
+code {
+  padding: 0.18rem 0.42rem;
+  border-radius: 10px;
+  background: #eef4ff;
+  border: 1px solid #dbe8ff;
+  color: #1e40af;
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 0.92em;
+}
+
 .hidden {
   display: none !important;
 }
 
 .app-shell,
 .boot-shell {
-  width: min(var(--content-width), calc(100% - 32px));
+  width: min(var(--content-width), calc(100% - 40px));
   margin: 0 auto;
-  padding: 24px 0 56px;
+  padding: 28px 0 64px;
 }
 
 .app-shell {
   display: grid;
-  gap: 24px;
+  gap: 20px;
 }
 
 .boot-shell {
@@ -114,27 +134,24 @@ button {
 .panel {
   position: relative;
   overflow: hidden;
-  border: 1px solid var(--line);
+  border: 1px solid rgba(215, 226, 239, 0.95);
   border-radius: var(--radius-xl);
-  background:
-    radial-gradient(circle at top right, rgba(76, 226, 255, 0.12), transparent 28%),
-    linear-gradient(180deg, rgba(9, 20, 40, 0.92), rgba(7, 15, 30, 0.84));
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 251, 255, 0.96));
   box-shadow: var(--shadow);
-  backdrop-filter: blur(18px);
 }
 
 .boot-panel {
-  max-width: 640px;
-  padding: 28px;
+  max-width: 680px;
+  padding: 32px;
 }
 
 .panel::before,
 .boot-panel::before {
   content: "";
   position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), transparent 22%);
-  pointer-events: none;
+  inset: 0 0 auto 0;
+  height: 4px;
+  background: linear-gradient(90deg, rgba(37, 99, 235, 0.85), rgba(14, 165, 233, 0.28), transparent 80%);
 }
 
 .eyebrow {
@@ -142,24 +159,24 @@ button {
   align-items: center;
   gap: 10px;
   margin: 0;
-  padding: 10px 16px;
+  padding: 8px 14px;
   border-radius: 999px;
-  border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--sky);
+  border: 1px solid #dbe7f5;
+  background: #f4f8ff;
+  color: var(--blue-strong);
   font-size: 12px;
   font-weight: 800;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
 }
 
 .eyebrow::before {
   content: "";
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
   border-radius: 999px;
   background: linear-gradient(135deg, var(--blue), var(--cyan));
-  box-shadow: 0 0 0 6px rgba(24, 119, 242, 0.12);
+  box-shadow: 0 0 0 6px rgba(37, 99, 235, 0.1);
 }
 
 .boot-panel h1,
@@ -168,11 +185,12 @@ button {
 .panel-title {
   margin: 18px 0 0;
   letter-spacing: -0.04em;
-  line-height: 0.98;
+  line-height: 1.05;
+  color: var(--text-strong);
 }
 
 .boot-panel h1 {
-  font-size: clamp(2rem, 4vw, 3.2rem);
+  font-size: clamp(2rem, 4vw, 3rem);
 }
 
 .boot-copy,
@@ -180,7 +198,7 @@ button {
 .section-copy,
 .muted {
   color: var(--muted);
-  line-height: 1.8;
+  line-height: 1.75;
 }
 
 .topbar {
@@ -188,7 +206,7 @@ button {
   flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
-  gap: 16px;
+  gap: 18px;
 }
 
 .brand {
@@ -203,10 +221,9 @@ button {
   height: 52px;
   align-items: center;
   justify-content: center;
-  border-radius: 18px;
-  border: 1px solid var(--line);
-  background: linear-gradient(135deg, rgba(24, 119, 242, 0.26), rgba(76, 226, 255, 0.12));
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  background: linear-gradient(135deg, #1d4ed8, #0ea5e9);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 10px 20px rgba(37, 99, 235, 0.16);
   font-weight: 900;
   letter-spacing: 0.06em;
   color: white;
@@ -214,7 +231,7 @@ button {
 
 .brand-copy h1 {
   margin: 0;
-  font-size: 1.1rem;
+  font-size: 1.12rem;
 }
 
 .brand-copy p {
@@ -243,16 +260,22 @@ button {
 .badge,
 .status-badge,
 .tiny-link {
-  transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  transition:
+    background 0.18s ease,
+    color 0.18s ease,
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    transform 0.18s ease;
 }
 
 .nav-links a,
 .chip,
 .ghost-button {
   border: 1px solid var(--line);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.05);
+  border-radius: 14px;
+  background: var(--panel-strong);
   color: var(--muted-strong);
+  box-shadow: var(--shadow-soft);
 }
 
 .nav-links a,
@@ -264,10 +287,10 @@ button {
 
 .nav-links a.active,
 .chip.active {
-  border-color: rgba(76, 226, 255, 0.28);
-  background: linear-gradient(135deg, rgba(24, 119, 242, 0.32), rgba(76, 226, 255, 0.18));
-  color: white;
-  box-shadow: 0 16px 30px rgba(24, 119, 242, 0.2);
+  border-color: #bfdbfe;
+  background: linear-gradient(180deg, #eff6ff, #dbeafe);
+  color: var(--blue-strong);
+  box-shadow: 0 8px 16px rgba(37, 99, 235, 0.1);
 }
 
 .nav-links a:hover,
@@ -275,12 +298,13 @@ button {
 .ghost-button:hover,
 .button:hover,
 .tiny-link:hover {
-  transform: translateY(-2px);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 18px rgba(15, 23, 42, 0.08);
 }
 
 .hero {
   display: grid;
-  gap: 24px;
+  gap: 20px;
   grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
 }
 
@@ -290,30 +314,36 @@ button {
   padding: 26px;
 }
 
+.hero-main {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(245, 249, 255, 0.96)),
+    radial-gradient(circle at top right, rgba(59, 130, 246, 0.08), transparent 28%);
+}
+
 .hero-title {
-  font-size: clamp(2.5rem, 4vw, 4.4rem);
+  font-size: clamp(2.3rem, 3.6vw, 3.8rem);
   max-width: 760px;
 }
 
 .hero-copy {
   margin-top: 16px;
   max-width: 720px;
-  font-size: 1.04rem;
+  font-size: 1.02rem;
 }
 
 .cta-primary,
 .button.primary {
-  background: linear-gradient(135deg, var(--blue) 0%, #46b8ff 54%, var(--cyan) 100%);
-  border: 0;
+  background: linear-gradient(180deg, #2563eb, #1d4ed8);
+  border: 1px solid #1d4ed8;
   color: white;
-  box-shadow: 0 18px 34px rgba(24, 119, 242, 0.26);
+  box-shadow: 0 14px 24px rgba(37, 99, 235, 0.22);
 }
 
 .cta-secondary,
 .button.secondary {
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--panel-strong);
   border: 1px solid var(--line);
-  color: var(--text);
+  color: var(--text-strong);
 }
 
 .button,
@@ -321,43 +351,49 @@ button {
 .cta-secondary,
 .ghost-button {
   display: inline-flex;
-  min-height: 46px;
+  min-height: 44px;
   align-items: center;
   justify-content: center;
   padding: 0 18px;
-  border-radius: 18px;
-  font-weight: 800;
+  border-radius: 14px;
+  font-weight: 700;
 }
 
 .ghost-button {
   min-height: 40px;
   padding: 0 14px;
-  color: var(--text);
+  color: var(--muted-strong);
 }
 
 .button.danger {
-  border: 0;
-  background: linear-gradient(135deg, #be123c, #fb7185);
+  border: 1px solid #f5c2c7;
+  background: linear-gradient(180deg, #ef4444, #dc2626);
   color: white;
-  box-shadow: 0 16px 30px rgba(190, 24, 60, 0.24);
+  box-shadow: 0 12px 20px rgba(220, 38, 38, 0.18);
 }
 
 .button.success {
-  border: 0;
-  background: linear-gradient(135deg, #059669, #34d399);
+  border: 1px solid #86efac;
+  background: linear-gradient(180deg, #10b981, #059669);
   color: white;
+  box-shadow: 0 12px 20px rgba(5, 150, 105, 0.16);
 }
 
 .button[disabled],
-.ghost-button[disabled] {
+.ghost-button[disabled],
+.button.is-disabled,
+.ghost-button.is-disabled {
   opacity: 0.58;
   cursor: not-allowed;
   transform: none;
+  pointer-events: none;
+  box-shadow: none;
 }
 
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
 }
 
 .stat-card,
@@ -371,7 +407,8 @@ button {
 .timeline-card {
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
-  background: var(--panel-soft);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(249, 251, 255, 0.95));
+  box-shadow: var(--shadow-soft);
 }
 
 .stat-card,
@@ -386,8 +423,9 @@ button {
 .stat-card strong,
 .metric-value {
   display: block;
-  font-size: 2rem;
+  font-size: 1.9rem;
   letter-spacing: -0.04em;
+  color: var(--text-strong);
 }
 
 .stat-card span,
@@ -411,7 +449,7 @@ button {
 }
 
 .device-grid {
-  grid-template-columns: minmax(0, 1.18fr) minmax(320px, 0.82fr);
+  grid-template-columns: minmax(0, 1.16fr) minmax(320px, 0.84fr);
 }
 
 .detail-grid {
@@ -437,7 +475,7 @@ button {
   color: var(--muted-strong);
   font-size: 0.78rem;
   font-weight: 800;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
 }
 
@@ -447,13 +485,31 @@ button {
 .file-input {
   width: 100%;
   min-height: 48px;
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  background: linear-gradient(180deg, rgba(9, 20, 40, 0.88), rgba(10, 25, 48, 0.74));
-  color: var(--text);
+  border: 1px solid #d3ddea;
+  border-radius: 14px;
+  background: white;
+  color: var(--text-strong);
   padding: 12px 14px;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), var(--shadow-soft);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85);
   outline: none;
+}
+
+.select {
+  appearance: none;
+  background-image:
+    linear-gradient(45deg, transparent 50%, #64748b 50%),
+    linear-gradient(135deg, #64748b 50%, transparent 50%),
+    linear-gradient(180deg, #ffffff, #ffffff);
+  background-position:
+    calc(100% - 18px) calc(50% - 4px),
+    calc(100% - 13px) calc(50% - 4px),
+    100% 0;
+  background-size:
+    5px 5px,
+    5px 5px,
+    2.6em 100%;
+  background-repeat: no-repeat;
+  padding-right: 48px;
 }
 
 .textarea {
@@ -461,12 +517,17 @@ button {
   resize: vertical;
 }
 
+.input::placeholder,
+.textarea::placeholder {
+  color: #94a3b8;
+}
+
 .input:focus,
 .select:focus,
 .textarea:focus,
 .file-input:focus {
-  border-color: rgba(76, 226, 255, 0.48);
-  box-shadow: 0 0 0 4px rgba(76, 226, 255, 0.14);
+  border-color: #93c5fd;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
 }
 
 .checkbox-grid {
@@ -480,18 +541,20 @@ button {
   gap: 10px;
   align-items: flex-start;
   padding: 14px 16px;
-  border-radius: 18px;
+  border-radius: 16px;
   border: 1px solid var(--line);
-  background: var(--panel-soft);
+  background: var(--panel-muted);
 }
 
 .checkbox-card input {
   margin-top: 3px;
+  accent-color: var(--blue);
 }
 
 .checkbox-card strong {
   display: block;
   font-size: 0.94rem;
+  color: var(--text-strong);
 }
 
 .checkbox-card span {
@@ -504,6 +567,7 @@ button {
 
 .table-shell {
   overflow: hidden;
+  background: white;
 }
 
 .table-scroll {
@@ -517,7 +581,7 @@ table {
 }
 
 thead {
-  background: rgba(255, 255, 255, 0.05);
+  background: linear-gradient(180deg, #f8fbff, #eef4fb);
 }
 
 th,
@@ -528,19 +592,19 @@ td {
 }
 
 th {
-  color: var(--muted);
+  color: #5f6f86;
   font-size: 0.74rem;
   font-weight: 800;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
 }
 
 tbody tr {
-  border-top: 1px solid rgba(132, 177, 255, 0.1);
+  border-top: 1px solid #e8eef6;
 }
 
 tbody tr:hover {
-  background: rgba(255, 255, 255, 0.04);
+  background: #f8fbff;
 }
 
 .status-badge,
@@ -554,45 +618,56 @@ tbody tr:hover {
   border-radius: 999px;
   font-size: 0.78rem;
   font-weight: 800;
+  border: 1px solid transparent;
 }
 
 .badge.info {
-  background: rgba(24, 119, 242, 0.16);
-  color: var(--sky);
+  background: #eff6ff;
+  border-color: #dbeafe;
+  color: #1d4ed8;
 }
 
 .badge.active {
-  background: rgba(52, 211, 153, 0.16);
-  color: #bbf7d0;
+  background: #ecfdf5;
+  border-color: #bbf7d0;
+  color: #047857;
 }
 
 .badge.archived,
 .badge.rose {
-  background: rgba(251, 113, 133, 0.16);
-  color: #fecdd3;
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: #b91c1c;
 }
 
 .badge.amber {
-  background: rgba(251, 191, 36, 0.16);
-  color: #fde68a;
+  background: #fff7ed;
+  border-color: #fed7aa;
+  color: #b45309;
 }
 
 .badge.slate {
-  background: rgba(148, 163, 184, 0.16);
-  color: #dbeafe;
+  background: #f1f5f9;
+  border-color: #e2e8f0;
+  color: #475569;
 }
 
 .tiny-link {
-  color: var(--sky);
+  color: var(--blue-strong);
   font-weight: 700;
+  background: none;
+  border: none;
+  padding: 0;
+  text-align: left;
+  box-shadow: none;
 }
 
 .tiny-link.danger {
-  color: #fecdd3;
+  color: #b91c1c;
 }
 
 .tiny-link.success {
-  color: #bbf7d0;
+  color: #047857;
 }
 
 .inline-meta,
@@ -610,11 +685,11 @@ tbody tr:hover {
 }
 
 .panel-title {
-  font-size: 1.8rem;
+  font-size: 1.55rem;
 }
 
 .section-title {
-  font-size: clamp(2rem, 3vw, 2.7rem);
+  font-size: clamp(1.9rem, 2.7vw, 2.5rem);
 }
 
 .section-copy,
@@ -624,7 +699,7 @@ tbody tr:hover {
 .info-card p {
   margin: 10px 0 0;
   color: var(--muted);
-  line-height: 1.8;
+  line-height: 1.75;
 }
 
 .hero-side .timeline-card + .timeline-card,
@@ -634,6 +709,7 @@ tbody tr:hover {
 
 .timeline-card strong {
   display: block;
+  color: var(--text-strong);
 }
 
 .timeline-meta {
@@ -659,34 +735,36 @@ tbody tr:hover {
 }
 
 .pagination .ghost-button.active {
-  border-color: rgba(76, 226, 255, 0.28);
-  background: rgba(24, 119, 242, 0.18);
+  border-color: #bfdbfe;
+  background: #dbeafe;
+  color: #1d4ed8;
 }
 
 .alert {
   padding: 14px 16px;
   border-radius: 16px;
   border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.05);
+  background: #f8fbff;
   line-height: 1.7;
+  color: var(--text);
 }
 
 .alert.error {
-  border-color: rgba(251, 113, 133, 0.28);
-  background: rgba(251, 113, 133, 0.12);
-  color: #ffe4e8;
+  border-color: #fecaca;
+  background: #fef2f2;
+  color: #991b1b;
 }
 
 .alert.success {
-  border-color: rgba(52, 211, 153, 0.26);
-  background: rgba(52, 211, 153, 0.12);
-  color: #d1fae5;
+  border-color: #bbf7d0;
+  background: #ecfdf5;
+  color: #065f46;
 }
 
 .alert.info {
-  border-color: rgba(76, 226, 255, 0.26);
-  background: rgba(76, 226, 255, 0.1);
-  color: #dff9ff;
+  border-color: #bfdbfe;
+  background: #eff6ff;
+  color: #1e3a8a;
 }
 
 .split {
@@ -712,17 +790,17 @@ tbody tr:hover {
   padding: 14px 16px;
   border-radius: 18px;
   border: 1px solid var(--line);
-  background: rgba(7, 15, 30, 0.92);
+  background: rgba(255, 255, 255, 0.96);
   box-shadow: var(--shadow);
-  color: var(--text);
+  color: var(--text-strong);
 }
 
 .toast.success {
-  border-color: rgba(52, 211, 153, 0.26);
+  border-color: #bbf7d0;
 }
 
 .toast.error {
-  border-color: rgba(251, 113, 133, 0.24);
+  border-color: #fecaca;
 }
 
 .loader {
@@ -736,31 +814,46 @@ tbody tr:hover {
   content: "";
   width: 14px;
   height: 14px;
-  border: 2px solid rgba(184, 231, 255, 0.2);
-  border-top-color: var(--cyan);
+  border: 2px solid rgba(37, 99, 235, 0.16);
+  border-top-color: var(--blue);
   border-radius: 999px;
   animation: spin 0.9s linear infinite;
 }
 
 .qr-canvas-shell {
   display: grid;
-  place-items: center;
-  padding: 20px;
-  border-radius: 24px;
-  border: 1px dashed var(--line);
-  background: rgba(255, 255, 255, 0.04);
+  gap: 16px;
+  justify-items: center;
+  padding: 22px;
+  border-radius: 20px;
+  border: 1px dashed #bfd4ea;
+  background: linear-gradient(180deg, #f8fbff, #eef5ff);
 }
 
 .qr-canvas-shell canvas {
   background: white;
   padding: 14px;
-  border-radius: 22px;
+  border-radius: 18px;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.1);
+}
+
+.qr-placeholder {
+  max-width: 260px;
+  text-align: center;
+  color: var(--muted);
+  line-height: 1.7;
 }
 
 .repo-note {
-  border: 1px solid rgba(251, 191, 36, 0.22);
-  background: rgba(251, 191, 36, 0.08);
-  color: #fde68a;
+  border: 1px solid #fde68a;
+  background: #fffbeb;
+  color: #92400e;
+}
+
+.empty-state strong {
+  display: block;
+  font-size: 1.05rem;
+  color: var(--text-strong);
 }
 
 @keyframes spin {
@@ -799,6 +892,18 @@ tbody tr:hover {
   .boot-panel {
     padding: 20px;
   }
+
+  .nav-links {
+    gap: 10px;
+  }
+
+  .nav-links a,
+  .chip,
+  .button,
+  .ghost-button {
+    width: 100%;
+    justify-content: center;
+  }
 }
 
     </style>
@@ -807,10 +912,10 @@ tbody tr:hover {
     <div id="app">
       <main class="boot-shell">
         <section class="boot-panel">
-          <p class="eyebrow">Booting Workspace</p>
-          <h1>Loading the GitHub + Supabase inventory console...</h1>
+          <p class="eyebrow">Loading Workspace</p>
+          <h1>Preparing the IT inventory workspace...</h1>
           <p class="boot-copy">
-            This static app runs entirely in the browser and connects directly to your Supabase project.
+            This standalone client runs in the browser and connects directly to your Supabase project.
           </p>
         </section>
       </main>
@@ -822,7 +927,7 @@ tbody tr:hover {
           <p class="eyebrow">JavaScript Required</p>
           <h1>This app needs JavaScript enabled.</h1>
           <p class="boot-copy">
-            GitHub Pages can serve this site statically, but the inventory system itself runs in the browser.
+            GitHub Pages serves this site statically, while the inventory system itself runs in the browser.
           </p>
         </section>
       </main>
@@ -1624,7 +1729,7 @@ function shell(mainContent, options = {}) {
             <div class="brand-mark">IT</div>
             <div class="brand-copy">
               <h1>${escapeHtml(APP_TITLE)}</h1>
-              <p>Static GitHub Pages build with Supabase browser auth and RLS-backed workflows</p>
+              <p>GitHub-hosted inventory workspace with Supabase auth, QR routing, and audit workflows</p>
             </div>
           </div>
           <div class="top-actions">
@@ -1808,12 +1913,12 @@ function renderHomePage() {
   return shell(`
     <section class="hero">
       <div class="panel hero-main">
-        <p class="eyebrow">GitHub Standalone Mode</p>
-        <h2 class="hero-title">Futuristic IT inventory operations running directly from GitHub Pages + Supabase.</h2>
+        <p class="eyebrow">GitHub + Supabase</p>
+        <h2 class="hero-title">Professional IT asset operations from a single GitHub-hosted control center.</h2>
         <p class="hero-copy">
-          This version is fully static on the hosting side. The browser handles routing, authentication,
-          device lookups, repair requests, transfers, and admin workflows directly against Supabase with
-          row-level security doing the protection work.
+          This build stays static on the hosting side while Supabase handles authentication, data access,
+          audit history, repair requests, and QR-based device lookups. The interface is tuned for daily
+          admin work without adding server-side hosting overhead.
         </p>
         <div class="action-row" style="margin-top: 24px;">
           <a class="button primary" href="${dashboardLink}">${isAdmin() ? "Open Admin Dashboard" : "Admin Login"}</a>
@@ -1836,7 +1941,7 @@ function renderHomePage() {
       </div>
 
       <div class="panel hero-side">
-        <p class="eyebrow">What Stays Lightweight</p>
+        <p class="eyebrow">Efficiency Controls</p>
         <div class="timeline" style="margin-top: 18px;">
           <div class="timeline-card">
             <strong>Public QR page</strong>
@@ -2120,6 +2225,10 @@ async function renderAdminDevicesPage(query) {
 function renderDeviceForm(device, lookups, qrUrl) {
   const formTitle = device?.id ? "Edit Device" : "Create Device";
   const submitLabel = device?.id ? "Save Device" : "Create Device";
+  const previewSlug = device?.qr_slug || slugify(device?.asset_code || "");
+  const hasPreview = Boolean(previewSlug);
+  const previewLink = hasPreview ? routeHref(`/device/${encodeURIComponent(previewSlug)}`) : "#";
+  const previewUrl = qrUrl || "Enter an asset code or QR slug to generate the public device URL.";
 
   return `
     <section class="device-grid">
@@ -2272,13 +2381,16 @@ function renderDeviceForm(device, lookups, qrUrl) {
           <h3 class="panel-title">Printable device label</h3>
           <p class="section-copy">QR images are generated locally in the browser and never stored in Supabase.</p>
           <div class="qr-canvas-shell" style="margin-top: 20px;">
-            <canvas id="device-qr-canvas" width="240" height="240"></canvas>
+            <canvas id="device-qr-canvas" width="240" height="240" class="${hasPreview ? "" : "hidden"}"></canvas>
+            <p id="device-qr-placeholder" class="qr-placeholder ${hasPreview ? "hidden" : ""}">
+              Enter an asset code or QR slug to preview the QR label before saving.
+            </p>
           </div>
           <div class="helper-list" style="margin-top: 18px;">
-            <p><strong>Public URL:</strong> <span class="muted">${escapeHtml(qrUrl)}</span></p>
+            <p><strong>Public URL:</strong> <span id="device-qr-public-url" class="muted">${escapeHtml(previewUrl)}</span></p>
             <div class="action-row">
-              <button class="button secondary" type="button" data-action="print-qr">Print QR</button>
-              <a class="button secondary" href="${routeHref(`/device/${encodeURIComponent(device?.qr_slug || slugify(device?.asset_code || ""))}`)}">Preview Public Page</a>
+              <button class="button secondary" type="button" data-action="print-qr" ${hasPreview ? "" : "disabled"}>Print QR</button>
+              <a id="device-preview-link" class="button secondary ${hasPreview ? "" : "is-disabled"}" href="${previewLink}">Preview Public Page</a>
             </div>
           </div>
         </div>
@@ -2302,7 +2414,7 @@ async function renderAdminDeviceFormPage(id) {
   }
 
   const slugSource = device?.qr_slug || slugify(device?.asset_code || "");
-  const qrUrl = absoluteHashUrl(`/device/${slugSource}`);
+  const qrUrl = slugSource ? absoluteHashUrl(`/device/${slugSource}`) : "";
 
   return shell(renderDeviceForm(device, lookups, qrUrl));
 }
@@ -3486,6 +3598,67 @@ function syncLocationOptions(branchSelect, locationSelect) {
   }
 }
 
+function getDeviceFormPreviewSlug() {
+  const form = document.getElementById("device-form");
+  if (!form) return "";
+
+  const explicitSlug = form.querySelector("[name='qr_slug']")?.value?.trim() ?? "";
+  const assetCode = form.querySelector("[name='asset_code']")?.value?.trim() ?? "";
+  return slugify(explicitSlug || assetCode);
+}
+
+function syncQrPreviewMeta(slug) {
+  const canvas = document.getElementById("device-qr-canvas");
+  const placeholder = document.getElementById("device-qr-placeholder");
+  const publicUrl = document.getElementById("device-qr-public-url");
+  const previewLink = document.getElementById("device-preview-link");
+  const printButton = document.querySelector("[data-action='print-qr']");
+  const url = slug ? absoluteHashUrl(`/device/${slug}`) : "";
+
+  if (canvas) {
+    canvas.classList.toggle("hidden", !slug);
+  }
+
+  if (placeholder) {
+    placeholder.textContent = slug
+      ? "QR preview ready for printing."
+      : "Enter an asset code or QR slug to preview the QR label before saving.";
+    placeholder.classList.toggle("hidden", !!slug);
+  }
+
+  if (publicUrl) {
+    publicUrl.textContent = url || "Enter an asset code or QR slug to generate the public device URL.";
+  }
+
+  if (previewLink) {
+    previewLink.href = slug ? routeHref(`/device/${encodeURIComponent(slug)}`) : "#";
+    previewLink.classList.toggle("is-disabled", !slug);
+  }
+
+  if (printButton) {
+    printButton.disabled = !slug;
+  }
+}
+
+function showQrPreviewError(message) {
+  const canvas = document.getElementById("device-qr-canvas");
+  const placeholder = document.getElementById("device-qr-placeholder");
+  const printButton = document.querySelector("[data-action='print-qr']");
+
+  if (canvas) {
+    canvas.classList.add("hidden");
+  }
+
+  if (placeholder) {
+    placeholder.textContent = message;
+    placeholder.classList.remove("hidden");
+  }
+
+  if (printButton) {
+    printButton.disabled = true;
+  }
+}
+
 async function bindRouteForms() {
   document.querySelector("#admin-login-form")?.addEventListener("submit", handleAdminLoginSubmit);
   document.querySelector("#device-form")?.addEventListener("submit", handleDeviceFormSubmit);
@@ -3508,33 +3681,47 @@ async function bindRouteForms() {
       syncLocationOptions(transferBranchSelect, transferLocationSelect),
     );
   }
+
+  const assetCodeInput = document.querySelector("#asset_code");
+  const qrSlugInput = document.querySelector("#qr_slug");
+  [assetCodeInput, qrSlugInput]
+    .filter(Boolean)
+    .forEach((input) => input.addEventListener("input", () => renderQrCanvas()));
 }
 
 async function renderQrCanvas() {
   const canvas = document.getElementById("device-qr-canvas");
   if (!canvas) return;
 
-  const route = getRoute();
-  let slug = "";
+  const context = canvas.getContext("2d");
+  context?.clearRect(0, 0, canvas.width, canvas.height);
 
-  if (route.path.startsWith("/device/") && route.path.endsWith("/edit")) {
+  const route = getRoute();
+  let slug = getDeviceFormPreviewSlug();
+
+  if (!slug && route.path.startsWith("/device/") && route.path.endsWith("/edit")) {
     slug = decodeURIComponent(route.path.split("/")[2]);
-  } else if (route.path.startsWith("/admin/devices/")) {
-    const form = document.getElementById("device-form");
-    slug = slugify(form?.querySelector("[name='qr_slug']")?.value || form?.querySelector("[name='asset_code']")?.value || "");
   }
 
+  syncQrPreviewMeta(slug);
   if (!slug) return;
 
   const url = absoluteHashUrl(`/device/${slug}`);
-  await QRCode.toCanvas(canvas, url, {
-    width: 220,
-    margin: 1,
-    color: {
-      dark: "#0b1628",
-      light: "#ffffff",
-    },
-  });
+  canvas.classList.remove("hidden");
+
+  try {
+    await QRCode.toCanvas(canvas, url, {
+      width: 220,
+      margin: 1,
+      color: {
+        dark: "#0f172a",
+        light: "#ffffff",
+      },
+    });
+  } catch (error) {
+    console.error("QR preview render failed", error);
+    showQrPreviewError("QR preview failed to render. Save the device and reopen this page to retry.");
+  }
 }
 
 async function renderRoute() {
